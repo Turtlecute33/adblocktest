@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="68" viewBox="0 0 280 68">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0284c7" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <rect x="8" y="6" width="264" height="52" rx="26" fill="url(#bg)" filter="url(#shadow)"/>
+  <ellipse cx="140" cy="14" rx="120" ry="10" fill="white" opacity="0.18"/>
+  <path d="M 70 22 L 86 32 L 70 42 Z" fill="white"/>
+  <text x="96" y="38" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif" font-size="17" font-weight="600" fill="white" letter-spacing="0.2">Run the test</text>
+</svg>

@@ -13,7 +13,7 @@ See if your blocker, DNS filter, or VPN catches ads, trackers, and analytics.
 <br />
 
 <a href="https://adblock.turtlecute.org">
-  <img src="https://img.shields.io/badge/▶%20Run%20the%20test-0ea5e9?style=for-the-badge&labelColor=0c4a6e" alt="Run the test" />
+  <img src="src/assets/run-test-cta.svg" alt="Run the test" width="240" />
 </a>
 
 <br />
