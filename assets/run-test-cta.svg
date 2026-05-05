@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="240" height="52" viewBox="0 0 240 52">
-  <rect width="240" height="52" rx="26" fill="#0ea5e9"/>
-  <path d="M 62 18 L 78 26 L 62 34 Z" fill="white"/>
-  <text x="88" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif" font-size="15" font-weight="600" fill="white" letter-spacing="0.2">Run the test</text>
-</svg>
