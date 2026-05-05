@@ -668,9 +668,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		location.reload()
 	})
 	const stxt =
-		'https://raw.githubusercontent.com/Turtlecute33/Toolz/master/src/d3host.txt'
+		'https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.txt'
 	const sadblock =
-		'https://raw.githubusercontent.com/Turtlecute33/Toolz/master/src/d3host.adblock'
+		'https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.adblock'
 	document
 		.querySelector('#hostListTxt')
 		.addEventListener('click', function () {

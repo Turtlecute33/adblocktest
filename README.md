@@ -30,8 +30,8 @@ I cleaned, modernized, and debloated [d3ward's original project](https://github.
 
 If your blocker isn't catching enough, my list is available in two formats:
 
-- [`d3host.txt`](https://raw.githubusercontent.com/Turtlecute33/Toolz/master/src/d3host.txt) — hosts file
-- [`d3host.adblock`](https://raw.githubusercontent.com/Turtlecute33/Toolz/master/src/d3host.adblock) — adblock syntax
+- [`d3host.txt`](https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.txt) — hosts file
+- [`d3host.adblock`](https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.adblock) — adblock syntax
 
 It's also bundled into [Blokada](https://blokada.org/) and the [OISD List](https://oisd.nl/).
 
@@ -45,7 +45,7 @@ npm run build    # production build to /dist
 
 ## Contributing
 
-Found a broken test? Want to suggest a new one? [Open an issue](https://github.com/Turtlecute33/Toolz/issues/new/choose) — contributions welcome.
+Found a broken test? Want to suggest a new one? [Open an issue](https://github.com/Turtlecute33/adblocktest/issues/new/choose) — contributions welcome.
 
 ## License
 

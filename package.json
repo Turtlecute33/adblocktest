@@ -26,11 +26,11 @@
   "homepage": "https://adblock.turtlecute.org",
   "license": "(CC BY-NC-SA 4.0)",
   "bugs": {
-    "url": "https://github.com/Turtlecute33/Toolz/issues"
+    "url": "https://github.com/Turtlecute33/adblocktest/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Turtlecute33/Toolz.git"
+    "url": "https://github.com/Turtlecute33/adblocktest.git"
   },
   "dependencies": {},
   "devDependencies": {
