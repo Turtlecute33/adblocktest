@@ -1,30 +1,32 @@
 ---
-name: New/Verified Test Issue Template
-about: Use this template when documenting a successful or verified test. Provide details
-  about the browser, operating system, Adblock solution
-title: ''
+name: Verified setup report
+about: Document a working browser + adblock combination so others can reproduce it
+title: "[verified] "
 labels: passed-test
 assignees: Turtlecute33
 
 ---
 
-**Browser:**
-**OS:**
-**Adblock Solution:**
+### Setup
 
-**Test Passed Value ( % ):**
+- **Browser & version:**
+- **OS & version:**
+- **Adblock solution:** <!-- extension, DNS, VPN, custom router, etc. -->
+- **Filter lists / DNS / config:**
 
-**Description:**
-[Provide a detailed description of the configuration used ( DNS , VPN, Lists etc.]
+### Result
 
-**Screenshots:**
-[Attach any relevant screenshots or examples if available]
+- **Score (%):**
+- **Categories blocked:** <!-- ads, analytics, trackers, social, OEM, mixed -->
 
-**Test Result Data:**
-[Provide exported test result]
+### Details
 
-**Test Log:**
-[Include the test log if available]
+<!-- Anything notable: tweaks, exceptions, custom rules, why this combination works well. -->
 
-**Dev Console:**
-[Copy and paste any relevant logs  from the developer console]
+### Evidence
+
+<!-- Exported test result, screenshots, or test log. -->
+
+```
+<test result / log>
+```

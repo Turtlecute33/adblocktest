@@ -1,7 +1,18 @@
 {
   "name": "toolz",
   "version": "3.1.3",
-  "description": "Ad blocker testing website",
+  "description": "Privacy-first ad blocker, tracker, and DNS filter test suite — checks cosmetic filters, script blocking, and host coverage across ads, analytics, trackers, social, and OEM domains.",
+  "keywords": [
+    "adblock",
+    "adblock-test",
+    "ad-blocker",
+    "tracker-test",
+    "dns-filter",
+    "privacy",
+    "ublock-origin",
+    "hosts",
+    "pi-hole"
+  ],
   "scripts": {
     "dev": "webpack serve --config config/webpack.dev.js",
     "build": "webpack --config config/webpack.prod.js",

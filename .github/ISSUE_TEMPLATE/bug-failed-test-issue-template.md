@@ -1,47 +1,41 @@
 ---
-name: Bug/Failed Test Issue Template
-about: Use this template when reporting a bug or a failed test. Provide details about
-  the issue, such as the browser, operating system, Adblock solution
-title: ''
-labels: failed-test
+name: Bug or failed test
+about: Report a broken test, false positive, or unexpected result
+title: "[bug] "
+labels: bug
 assignees: Turtlecute33
 
 ---
 
 <!--
-Thank you for taking the time to report an issue. To help us process your issue effectively, please fill out each section below. Fields marked with ** are required. For fields not applicable to your issue, please write 'N/A'.
-
-Before submitting, please:
-- Check if a similar issue has already been reported.
-- Ensure that your issue is related to a bug or a failed test, not a question or discussion. For general questions or support, use a blank issue
+Before submitting, please check existing issues for duplicates.
+Fields marked required are needed for triage. Use "N/A" if not applicable.
 -->
 
-### Context
+### Environment (required)
 
-**Browser**:
+- **Browser & version:**
+- **OS & version:**
+- **Adblock solution:** <!-- e.g. uBlock Origin 1.58, NextDNS, Brave Shields -->
+- **Filter lists / config:**
 
-**Operating System**:
+### What happened
 
-**Adblock Solution**:
+<!-- A clear description of the bug or failed test, plus steps to reproduce. -->
 
-**Description of Issue**:
-<!-- Please provide a clear and concise description of what the issue is, including steps to reproduce if applicable. -->
+### Expected behavior
 
-**Screenshots:**
-<!-- If applicable, add screenshots to help explain your issue. -->
-[Attach screenshots here if applicable]
+<!-- What you thought should happen. -->
 
-### Logs
-<!-- If relevant, copy and paste any logs or error messages from test log or developer console here. -->
+### Logs & screenshots
 
-**Test Result:**
-[Describe the result of the test]
+<!-- Paste the test log, dev console output, or screenshots if relevant. -->
 
-**Test Log:**
-[Include the test log if available]
-
-**Dev Console:**
-[Copy and paste any relevant logs or error messages from the developer console]
+```
+<test log here>
+```
 
 ### Confirmation
-- [ ] I confirm that I have filled out all the necessary fields with enough detail to allow for the proper investigation and potential resolution of the issue.
+
+- [ ] I searched existing issues and this is not a duplicate.
+- [ ] I included the environment details above.
