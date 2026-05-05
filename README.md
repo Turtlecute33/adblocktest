@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="src/assets/toolz/icon.svg" alt="Toolz" width="120" height="120" />
+<img src="src/assets/toolz/icon.svg" alt="AdBlockTest" width="120" height="120" />
 
-# Toolz
+# AdBlockTest
 
 **A small, privacy-first ad blocker test.**
 Check whether your blocker, DNS filter, or VPN actually catches ads, trackers, and analytics.

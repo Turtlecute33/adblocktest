@@ -127,7 +127,7 @@ function downloadResult(k) {
 	const linkElement = document.createElement('a')
 	linkElement.href = url
 	const safeDate = r.date.replace(/[/:]/g, '-').replace(/ /g, '_')
-	linkElement.setAttribute('download', 'toolz_adb_' + safeDate + '.json')
+	linkElement.setAttribute('download', 'adblocktest_' + safeDate + '.json')
 	document.body.appendChild(linkElement)
 	linkElement.click()
 	linkElement.remove()
