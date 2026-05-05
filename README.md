@@ -7,12 +7,16 @@
 **A small, privacy-first ad blocker test.**
 See if your blocker, DNS filter, or VPN catches ads, trackers, and analytics.
 
+[![License](https://img.shields.io/badge/license-CC--BY--NC--SA%204.0-22c55e?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![Forked from](https://img.shields.io/badge/forked%20from-d3ward%2Ftoolz-475569?style=flat-square)](https://github.com/d3ward/toolz)
+
+<br />
+
 <a href="https://adblock.turtlecute.org">
   <img src="https://img.shields.io/badge/▶%20Run%20the%20test-0ea5e9?style=for-the-badge&labelColor=0c4a6e" alt="Run the test" />
 </a>
 
-[![License](https://img.shields.io/badge/license-CC--BY--NC--SA%204.0-22c55e?style=flat-square)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![Forked from](https://img.shields.io/badge/forked%20from-d3ward%2Ftoolz-475569?style=flat-square)](https://github.com/d3ward/toolz)
+<br />
 
 </div>
 
