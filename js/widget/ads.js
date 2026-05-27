@@ -1,1 +1,1 @@
-var s_test_ads="s_test_ads";
+window.s_test_ads=!0;

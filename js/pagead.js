@@ -1,1 +1,1 @@
-const s_test_pagead=!0;
+window.s_test_pagead=!0;
