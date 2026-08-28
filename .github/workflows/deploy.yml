@@ -27,6 +27,43 @@ jobs:
       - name: Build app
         run: npm run build
 
+      # Nothing else validates the EJS output. The robots meta, the canonical and
+      # the whole OG/JSON-LD block are gated on a `noindex` variable resolved by a
+      # typeof fallback, so a rename in head.ejs could silently ship a noindexed
+      # home page to a property taking ~230k clicks a quarter.
+      - name: Verify built artifact
+        run: |
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+          # if/then rather than `grep && fail`: under set -e the exit status of an
+          # && list is easy to get wrong, and a silently skipped check here is the
+          # exact failure this step exists to catch.
+          if ! grep -q '<link rel="canonical" href="https://adblock.turtlecute.org/">' dist/index.html; then
+            fail "canonical missing or wrong in dist/index.html"
+          fi
+          if grep -q 'noindex' dist/index.html; then fail "dist/index.html is noindexed"; fi
+          if ! grep -q 'noindex' dist/404.html; then fail "dist/404.html is missing noindex"; fi
+          if ! grep -q 'application/ld+json' dist/index.html; then fail "JSON-LD block missing"; fi
+          node -e "
+            const fs=require('fs');
+            const m=fs.readFileSync('dist/index.html','utf8').match(/<script type=\"application\/ld\+json\">([\s\S]*?)<\/script>/);
+            if(!m) { console.error('::error::no JSON-LD'); process.exit(1); }
+            const g=JSON.parse(m[1]);
+            const types=(g['@graph']||[]).map(n=>n['@type']);
+            for (const t of ['WebSite','Person','WebApplication'])
+              if(!types.includes(t)) { console.error('::error::JSON-LD @graph missing '+t); process.exit(1); }
+          "
+          for f in sitemap.xml robots.txt d3host.txt d3host.adblock \
+                   css/index.css css/banner_wide.css css/banner_narrow.css \
+                   js/index.js js/pagead.js js/widget/ads.js assets/btcpay/pay.svg; do
+            [ -s "dist/$f" ] || fail "dist/$f missing or empty"
+          done
+          if ! grep -q 'banner_narrow.css' dist/index.html; then fail "banner stylesheets not linked"; fi
+          if grep -q 'btcpay.priorato.org/img' dist/index.html; then
+            fail "pay button still loads from the remote payment host"
+          fi
+          echo "Artifact checks passed."
+
       - name: Create CNAME file
         run: echo "adblock.turtlecute.org" > dist/CNAME
 

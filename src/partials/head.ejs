@@ -1,17 +1,84 @@
+<%# template-ejs-loader only rewrites a require() that shares its line with the
+	EJS tags, so this has to stay on one line and outside the block below. %>
+<% const pkg = require('./package.json') %>
 <%
 	const pageUrl = typeof canonical !== 'undefined' && canonical ? canonical : `https://${url}`
 	const socialImage = typeof preview_thumbnail !== 'undefined' && preview_thumbnail ? preview_thumbnail : 'https://adblock.turtlecute.org/assets/preview_toolz.jpg'
+	const imageAlt = typeof image_alt !== 'undefined' && image_alt ? image_alt : 'AdBlockTest score ball showing the result of an ad blocker test'
+	const isIndexable = typeof noindex === 'undefined' || !noindex
+	const SITE_URL = 'https://adblock.turtlecute.org/'
+	const APP_NAME = 'AdBlockTest'
+	// One @graph so the app, the site and the person are a single connected entity
+	// instead of four unlinked "Turtlecute" assertions. Serialised through
+	// JSON.stringify because EJS interpolation is an HTML escaper: it would turn
+	// an apostrophe in title or description into &#39; inside a JSON string value,
+	// which JSON.parse still accepts, so no validator would ever flag it.
+	const jsonLd = {
+		'@context': 'https://schema.org',
+		'@graph': [
+			{
+				'@type': 'WebSite',
+				'@id': SITE_URL + '#website',
+				name: APP_NAME,
+				alternateName: 'Ad Blocker Test',
+				url: SITE_URL,
+				inLanguage: 'en',
+				publisher: { '@id': 'https://turtlecute.org/#person' }
+			},
+			{
+				'@type': 'Person',
+				'@id': 'https://turtlecute.org/#person',
+				name: 'Turtlecute',
+				url: 'https://turtlecute.org',
+				sameAs: [
+					'https://github.com/Turtlecute33',
+					'https://turtlecute.org'
+				]
+			},
+			{
+				'@type': 'WebApplication',
+				'@id': pageUrl + '#app',
+				name: APP_NAME,
+				alternateName: 'Ad Blocker Test',
+				description: description,
+				url: pageUrl,
+				isPartOf: { '@id': SITE_URL + '#website' },
+				applicationCategory: 'UtilitiesApplication',
+				applicationSubCategory: 'Ad blocker, tracker blocker and DNS filter testing',
+				operatingSystem: 'Any',
+				browserRequirements: 'Requires JavaScript. Requires HTML5.',
+				isAccessibleForFree: true,
+				offers: {
+					'@type': 'Offer',
+					price: '0',
+					priceCurrency: 'USD'
+				},
+				author: { '@id': 'https://turtlecute.org/#person' },
+				maintainer: { '@id': 'https://turtlecute.org/#person' },
+				publisher: { '@id': 'https://turtlecute.org/#person' },
+				image: socialImage,
+				featureList: [
+					'Cosmetic filter testing',
+					'Ad script blocking checks',
+					'Host and DNS filter coverage checks',
+					'Pi-hole, AdGuard Home and NextDNS scoring guidance',
+					'Detailed browser and blocker compatibility results'
+				],
+				inLanguage: 'en',
+				softwareVersion: pkg.version
+			}
+		]
+	}
 %>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#161625">
-	<% if (typeof noindex !== 'undefined' && noindex) { %>
+	<% if (!isIndexable) { %>
 	<meta name="robots" content="noindex, nofollow">
 	<meta name="googlebot" content="noindex, nofollow">
 	<% } else { %>
 	<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-	<meta name="googlebot" content="index, follow">
 	<% } %>
 
 	<!-- Resource Hints -->
@@ -24,12 +91,7 @@
   	<meta name="author" content="Turtlecute">
 	<meta name="description" content="<%= description %>">
 
-	<% if (typeof noindex === 'undefined' || !noindex) { %>
-	<!-- Google / Search Engine Tags -->
-	<meta itemprop="name" content="<%= title %>">
-	<meta itemprop="description" content="<%= description %>">
-	<meta itemprop="image" content="<%= socialImage %>">
-
+	<% if (isIndexable) { %>
 	<!-- Open Graph Tags -->
 	<meta property="og:url" content="<%= pageUrl %>">
 	<meta property="og:type" content="website">
@@ -38,7 +100,7 @@
 	<meta property="og:image" content="<%= socialImage %>">
 	<meta property="og:image:width" content="1200">
 	<meta property="og:image:height" content="630">
-	<meta property="og:image:alt" content="<%= title %> - Preview">
+	<meta property="og:image:alt" content="<%= imageAlt %>">
 	<meta property="og:site_name" content="AdBlockTest">
 	<meta property="og:locale" content="en_US">
 
@@ -48,57 +110,20 @@
 	<meta name="twitter:title" content="<%= title %>">
 	<meta name="twitter:description" content="<%= description %>">
 	<meta name="twitter:image" content="<%= socialImage %>">
-	<meta name="twitter:image:alt" content="<%= title %> - Preview">
+	<meta name="twitter:image:alt" content="<%= imageAlt %>">
 
 	<!-- Structured Data (JSON-LD) -->
-	<script type="application/ld+json">
-	{
-		"@context": "https://schema.org",
-		"@type": "SoftwareApplication",
-		"@id": "<%= pageUrl %>#app",
-		"name": "<%= title %>",
-		"alternateName": "AdBlockTest",
-		"description": "<%= description %>",
-		"url": "<%= pageUrl %>",
-		"applicationCategory": "UtilityApplication",
-		"applicationSubCategory": "Ad blocker, tracker blocker, and DNS filter testing",
-		"operatingSystem": "Any",
-		"isAccessibleForFree": true,
-		"offers": {
-			"@type": "Offer",
-			"price": "0",
-			"priceCurrency": "USD"
-		},
-		"author": {
-			"@type": "Person",
-			"name": "Turtlecute",
-			"url": "https://github.com/Turtlecute33"
-		},
-		"maintainer": {
-			"@type": "Person",
-			"name": "Turtlecute",
-			"url": "https://github.com/Turtlecute33"
-		},
-		"publisher": {
-			"@type": "Person",
-			"name": "Turtlecute",
-			"url": "https://turtlecute.org"
-		},
-		"image": "<%= socialImage %>",
-		"screenshot": "<%= socialImage %>",
-		"featureList": [
-			"Cosmetic filter testing",
-			"Ad script blocking checks",
-			"Host and DNS filter coverage checks",
-			"Detailed browser and blocker compatibility results"
-		],
-		"keywords": "ad blocker test, adblock test, tracker blocker test, DNS filter test, uBlock Origin test",
-		"inLanguage": "en",
-		"browserRequirements": "Requires JavaScript. Requires HTML5.",
-		"softwareVersion": "<%= require('./package.json').version %>"
-	}
-	</script>
+	<script type="application/ld+json"><%- JSON.stringify(jsonLd) %></script>
 
+	<% } %>
+
+	<% if (page === 'adblock') { %>
+	<!-- Sponsor creative, split per breakpoint. A non-matching media attribute
+	     makes the stylesheet non-render-blocking and low priority, so a visitor
+	     pays for one creative instead of both. Together these two files hold the
+	     base64 image that was 54% of the single render-blocking stylesheet. -->
+	<link href="/css/banner_narrow.css" rel="stylesheet" media="(max-width: 48em)">
+	<link href="/css/banner_wide.css" rel="stylesheet" media="(min-width: 48.0625em)">
 	<% } %>
 
 </head>

@@ -10,6 +10,15 @@ function center(s, max, c) {
 }
 const header = (entries, date, comment) => {
 	let ext = comment === '#' ? '.txt' : '.adblock'
+	// A hosts file can only answer the Host category. Claiming it covers "all the
+	// tests" is the single most-quoted piece of evidence against this tool: people
+	// add the list, still score ~60%, and conclude the test is broken. The adblock
+	// syntax build does cover everything, because it also ships the cosmetic and
+	// script rules appended in list().
+	let coverage =
+		comment === '#'
+			? ' Covers the Host category of https://adblock.turtlecute.org — a hosts file cannot pass the cosmetic filter or ad script checks. Pair it with a browser extension for a full score.\n'
+			: ' Covers every category on https://adblock.turtlecute.org, including the cosmetic filter and ad script checks.\n'
 	return (
 		comment +
 		' Title: Turtlecute Host List\n' +
@@ -18,15 +27,15 @@ const header = (entries, date, comment) => {
 		comment +
 		' Description: Simple and small list with the most popular advertising, tracking, analytics and social advertising services\n' +
 		comment +
-		' Homepage: https://github.com/Turtlecute33/adblocktest\n' +
+		' Homepage: https://adblock.turtlecute.org\n' +
 		comment +
 		' License: CC BY-NC-SA\n' +
 		comment +
-		' Source: https://github.com/Turtlecute33/adblocktest/blob/master/src/d3host' +
+		' Source: https://adblock.turtlecute.org/d3host' +
 		ext +
 		'\n\n' +
 		comment +
-		' This list cover all the tests on https://adblock.turtlecute.org\n' +
+		coverage +
 		comment +
 		' Type : Stable\n' +
 		comment +

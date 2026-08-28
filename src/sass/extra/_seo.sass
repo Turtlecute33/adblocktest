@@ -10,19 +10,31 @@
 		max-width: 34rem
 		opacity: .75
 		line-height: 1.5
-	// Keep the sponsorship banner above the fold on mobile:
-	// compact the H1 and drop the subtitle from view (still in the DOM for crawlers).
+	// Mobile is 62% of visits, so the one sentence that says what this page does
+	// has to stay visible. Compact the H1 and shrink the subtitle to buy the room
+	// the sponsor placement needs, rather than hiding the copy.
 	@media (max-width: 40em)
 		margin: .15rem 0 .1rem
 		h1
 			font-size: 1.28em
 			line-height: 1.12
 		p
-			display: none
+			font-size: .82rem
+			line-height: 1.35
+			margin-top: .2rem
+			max-width: 30rem
 	@media (max-width: 40em) and (max-height: 720px)
 		margin: 0
 		h1
 			font-size: 1.2em
+	// Landscape phones and genuinely short viewports only. The subtitle is the
+	// first thing to give up its space, because the score ball and the Re-test
+	// button have to stay reachable. Portrait phones are ~650-900px tall in CSS
+	// pixels, so they keep the copy — 720px would have hidden it on almost every
+	// phone, which is the bug this block used to have.
+	@media (max-width: 40em) and (max-height: 560px)
+		p
+			display: none
 
 .seo_content
 	margin: 2.5rem auto 1rem
@@ -35,6 +47,70 @@
 		max-width: 40rem
 		margin: 0 auto 1.5rem
 		opacity: .75
+
+// Static, server-rendered explainer blocks: what the three checks do, and what a
+// DNS filter should expect to score. Rendered from adblock_data.json at build
+// time so the copy cannot drift from the test. .seo_content is a flex container,
+// so these children need min-width: 0 or they refuse to shrink below their
+// min-content width and get clipped by its overflow-x: hidden.
+.checks_grid,
+.dns_grid
+	max-width: 62rem
+	width: 100%
+	min-width: 0
+	margin: 0 auto
+	h3
+		font-size: 1.05em
+		margin: 0 0 .35rem
+	p
+		margin: 0
+		font-size: .9rem
+		line-height: 1.5
+		opacity: .85
+
+.hosts_head
+	text-align: center
+	font-size: 1.1em
+	margin: 2rem 0 .75rem
+
+.hosts_list
+	list-style: none
+	padding: 0
+	max-width: 62rem
+	width: 100%
+	// min-width: 0 because this is a flex item inside .seo_content; without it the
+	// grid holds its min-content width (3 columns) and the parent clips it.
+	// min(17rem, 100%) so a single column can still go narrower than 17rem.
+	min-width: 0
+	margin: 0 auto
+	display: grid
+	gap: .5rem
+	grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr))
+	li
+		background: var(--bg2)
+		border-radius: var(--r-md)
+		padding: var(--sp-1) var(--sp-2)
+	b
+		display: block
+		font-size: .95rem
+	.hosts_count
+		display: block
+		font-size: .78rem
+		opacity: .6
+		margin: .1rem 0 .3rem
+	.hosts_brands
+		display: block
+		font-size: .84rem
+		line-height: 1.45
+		opacity: .8
+
+.dns_note
+	max-width: 56rem
+	margin: 1.25rem auto 0
+	text-align: center
+	font-size: .85rem
+	line-height: 1.5
+	opacity: .7
 
 .faq_list
 	display: flex

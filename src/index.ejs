@@ -4,14 +4,13 @@
 		{
 			page:'adblock',
 			title:'Ad Blocker Test | Check if Your Ad Blocker Works',
-			description:"Free ad blocker test for browsers, DNS filters, and VPNs. See whether ads, trackers, and analytics scripts are blocked in one click with detailed results.",
+			description:"Free ad blocker test for browsers, extensions, VPNs and DNS filters. Check uBlock Origin, AdGuard, Pi-hole or NextDNS against 128 ad and tracker hosts in one click.",
 			url: 'adblock.turtlecute.org',
 			canonical: 'https://adblock.turtlecute.org/',
-			preview_thumbnail:'https://adblock.turtlecute.org/assets/preview_toolz.jpg',
-			keywords:'adblock test,ad block test,ad blocker test,adblock,test adblock,analytics,trackers,ads,cosmetic filter,ublock, ublockorigin,adblock extension,script loading'
+			preview_thumbnail:'https://adblock.turtlecute.org/assets/preview_toolz.jpg'
 		}) %>
 
-<body class="_overflowhidden">
+<body>
 
     <%- include('partials/header.ejs', {page:'adblock'}) %>
 
@@ -109,9 +108,15 @@
                 </div>
             </section>
             <section>
-                <div class="collab_wrap">
-                    <a href="https://shockvpn.com/?utm_source=adblock.turtlecute.org" class="collab_box" data-umami-event="ShockVPN banner click" data-umami-event-partner="ShockVPN" target="_blank" rel="noopener noreferrer sponsored" aria-label="Learn more about ShockVPN (opens in a new tab)">
+                <!-- The sponsor sits in its own container so a cosmetic rule scoped to it
+                     cannot take the accuracy caveat and the GitHub ask down with it. The
+                     creative is a base64 background in the stylesheet, not a separate
+                     request, so there is no URL for a network rule to match. -->
+                <div class="hero_extra">
+                    <a href="https://shockvpn.com/?utm_source=adblock.turtlecute.org" class="hero_feature" data-umami-event="ShockVPN banner click" data-umami-event-partner="ShockVPN" target="_blank" rel="noopener noreferrer sponsored" aria-label="Learn more about ShockVPN (opens in a new tab)">
                     </a>
+                </div>
+                <div class="notice_stack">
                     <p class="i_box _warn">
                         <svg class="i_ico" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true">
                             <path stroke="none" d="M0 0h24v24H0z" />
@@ -210,13 +215,13 @@ adblock.turtlecute.org##.textads</code></pre>
                                 <div class="col-6">
                                     <div id="sfa_1" class="test_block _aos">
                                         ads.js
-                                        <script src="./js/widget/ads.js"></script>
+                                        <script defer src="./js/widget/ads.js"></script>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div id="sfa_2" class="test_block _aos">
                                         pagead.js
-                                        <script src="./js/pagead.js"></script>
+                                        <script defer src="./js/pagead.js"></script>
                                     </div>
                                 </div>
                             </div>
@@ -250,6 +255,81 @@ adblock.turtlecute.org##.textads</code></pre>
                 </div>
             </section>
         </div>
+        <%# Rendered at build time from the same data the test runs on, so the copy and
+        the test can never drift apart. This is also the only place a crawler that does
+        not execute JavaScript can see what the Host category actually checks.
+        Each require() must stay on its own single line: template-ejs-loader rewrites
+        the path only when require() and the EJS tags share a line. %>
+        <% const adblock_data = require('./data/adblock_data.json') %>
+        <% const CATEGORY_LABELS = require('./data/category_labels.json') %>
+        <%
+        const categories = Object.keys(adblock_data).map((key) => {
+            const brands = Object.keys(adblock_data[key])
+            const hosts = brands.reduce((n, b) => n + adblock_data[key][b].length, 0)
+            return { key: key, label: CATEGORY_LABELS[key] || key, brands: brands, hosts: hosts }
+        })
+        const totalHosts = categories.reduce((n, c) => n + c.hosts, 0)
+        const totalBrands = categories.reduce((n, c) => n + c.brands.length, 0)
+        %>
+        <section class="seo_content better_r">
+            <h2>What this ad blocker test checks</h2>
+            <p>Three independent checks, scored together. No real ads or trackers are ever loaded.</p>
+            <div class="checks_grid row keep-width">
+                <div>
+                    <div class="card _h-100">
+                        <h3>Cosmetic filters</h3>
+                        <p>Two ad-shaped elements, one static and one added after load. The test measures whether your blocker removes or hides them.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="card _h-100">
+                        <h3>Ad script loading</h3>
+                        <p>Two decoy scripts named <code>ads.js</code> and <code>pagead.js</code>. The test measures whether they were stopped from running.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="card _h-100">
+                        <h3>Host and DNS blocking</h3>
+                        <p><%= totalHosts %> hostnames across <%= totalBrands %> ad, analytics, tracking and telemetry services. This is the only category a DNS filter can score on.</p>
+                    </div>
+                </div>
+            </div>
+            <h3 class="hosts_head">The <%= totalHosts %> hosts, by category</h3>
+            <ul class="hosts_list">
+                <% categories.forEach(function (c) { %>
+                <li>
+                    <b><%= c.label %></b>
+                    <span class="hosts_count"><%= c.hosts %> hosts</span>
+                    <span class="hosts_brands"><%= c.brands.join(', ') %></span>
+                </li>
+                <% }) %>
+            </ul>
+        </section>
+        <section class="seo_content better_r">
+            <h2>Testing a DNS filter: Pi-hole, AdGuard Home, NextDNS, AdGuard DNS or Control D</h2>
+            <p>A DNS filter blocks domains, so it can only pass the Host category. Here is the score to expect and how to read it.</p>
+            <div class="dns_grid row keep-width">
+                <div>
+                    <div class="card _h-100">
+                        <h3>What a good Pi-hole score looks like</h3>
+                        <p>A DNS filter on its own answers <%= totalHosts %> of the <%= totalHosts + 4 %> checks, so <b>roughly 40&ndash;60% is the correct result</b>, not a failure. The four cosmetic and script checks need a browser extension, which no DNS resolver can do. If you want to know whether your Pi-hole is working, look at the Host category, not the total.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="card _h-100">
+                        <h3>Turn the block page off first</h3>
+                        <p>Pi-hole, AdGuard Home and NextDNS can answer a blocked domain with their own block page instead of dropping the request. To this test that looks like a <em>successful</em> connection, so your score drops even though the domain was blocked. Set the blocking mode to NXDOMAIN or NULL and re-run.</p>
+                    </div>
+                </div>
+                <div>
+                    <div class="card _h-100">
+                        <h3>Getting to a full score</h3>
+                        <p>Pair the DNS filter with a browser extension such as uBlock Origin or the AdGuard extension. The DNS layer covers the hosts, the extension covers the cosmetic filters and the ad scripts. That combination is what scores green here.</p>
+                    </div>
+                </div>
+            </div>
+            <p class="dns_note">Written Pi-hole, pi-hole or pihole &mdash; all the same thing, and the same advice applies to AdGuard Home, AdGuard DNS, Control D, Quad9 and any other resolver-level blocker. The test cannot see per-client rules, regex filters or allowlists &mdash; only whether the <%= totalHosts %> hostnames above resolved.</p>
+        </section>
         <section class="seo_content better_r">
             <h2>Ad blocker test FAQ</h2>
             <p>Answers about how the test works, what your score means, and how to improve it.</p>
@@ -329,7 +409,7 @@ adblock.turtlecute.org##.textads</code></pre>
             const STATE_LABEL = { ok: 'Test works', mixed: 'Some limits', bad: 'Cannot test' }
             const ICON = { dns: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0M3.6 9h16.8M3.6 15h16.8"/><path d="M11.5 3a17 17 0 0 0 0 18M12.5 3a17 17 0 0 1 0 18"/></svg>` }
             const kinds = [
-                { state: 'mixed', icon: ICON.dns, name: 'Other DNS filters', type: 'Pi-hole, AdGuard Home, Control D, Quad9', desc: 'Not tested one by one. Only domain blocking can be measured, so the cosmetic score stays low. If the filter replies with a block page, the request looks successful and the score drops further. Turn that option off, and add a browser extension to cover the rest.' }
+                { state: 'mixed', icon: ICON.dns, name: 'Pi-hole, AdGuard Home and other DNS filters', type: 'Pi-hole, AdGuard Home, AdGuard DNS, NextDNS, Control D, Quad9', desc: 'Not tested one by one. A DNS filter can only answer the Host category, so roughly 40–60% is the correct result for one on its own, not a failure. If the filter replies with its own block page instead of dropping the request, that looks like a successful connection here and the score drops further — set the blocking mode to NXDOMAIN or NULL. Add a browser extension to cover the cosmetic and script checks.' }
             ]
             const products = Object.keys(adblock_compatibility)
                 .filter((k) => k !== 'default' && adblock_compatibility[k].hidden !== true)

@@ -59,23 +59,38 @@ main
 		>div
 			padding-top: .25rem
 			padding-bottom: .25rem
-.collab_wrap
+// The sponsor lives alone in .hero_extra, and the info bars live in
+// .notice_stack, so a cosmetic rule scoped to the sponsor cannot also remove the
+// accuracy caveat and the GitHub ask. No padding here on purpose: if the child
+// is hidden the container collapses to nothing instead of leaving a gap.
+.hero_extra
+	display: block
+	padding: 0 var(--sp-1)
+.notice_stack
 	display: flex
 	flex-direction: column
 	gap: var(--sp-3)
 	padding: var(--sp-3) var(--sp-1) var(--sp-1)
-.collab_box
+// The creative itself is a base64 background declared in banner_wide.sass /
+// banner_narrow.sass, loaded as two media-scoped stylesheets. Keeping it in CSS
+// rather than an <img> or a separate file means there is no request URL for a
+// network filter rule to match, and only the breakpoint in use is downloaded.
+.hero_feature
 	display: block
 	overflow: hidden
 	border-radius: var(--r-lg)
 	text-decoration: none
 	line-height: 0
 	width: 100%
+	margin-top: var(--sp-3)
 	aspect-ratio: 1940 / 240
-	background: center / 100% 100% no-repeat url("../media/wide.webp")
+	background-position: center
+	background-size: 100% 100%
+	background-repeat: no-repeat
 	@media (max-width: 48em)
 		aspect-ratio: 1200 / 400
-		background-image: url("../media/narrow.webp")
+	@media (max-width: 40em)
+		margin-top: var(--sp-1)
 	&:focus-visible
 		outline: 2px solid var(--focus)
 		outline-offset: 3px
@@ -465,10 +480,14 @@ footer>div
 	100%
 		transform: translateY(0px) translateX(20px) scale(.8)
 		opacity: 0
+// First-paint defaults, before any test has produced a number. These must stay
+// neutral: a red "BAD" pill under the H1 is a verdict the test has not reached
+// yet, and it was visible for the first ~2 s of every visit. set_liquid()
+// overwrites all three on the first result.
 :root
-	--liquid-percentage: 50%
-	--liquid-title: "BAD"
-	--liquid-color: var(--red)
+	--liquid-percentage: 45%
+	--liquid-title: ""
+	--liquid-color: var(--bg3)
 
 .r_wrap span
 	display: flex
@@ -497,6 +516,12 @@ footer>div
 .lt_circle
 	width: 200px
 	height: 200px
+	// Reclaim the vertical space the hero subtitle now occupies on phones, so the
+	// sponsor placement stays where it was relative to the fold. Also gives the
+	// score pill (positioned at left:100% of this circle) room on narrow screens.
+	@media (max-width: 40em)
+		width: 168px
+		height: 168px
 	background: var(--liquid-color)
 	border: 3px solid var(--black-h)
 	border-radius: 50%

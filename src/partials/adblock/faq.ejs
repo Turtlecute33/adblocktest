@@ -62,21 +62,42 @@
 		</div>
 		<div class="row keep-width">
 			<div>
-				<div class="lt_value_2 _bg-red">Your ad blocker may not be enabled or configured</div>
+				<div class="lt_value_2 _bg-red">0&ndash;30%: your ad blocker may not be enabled or configured</div>
 			</div>
 			<div>
-				<div class="lt_value_2 _bg-orange">Okay, but you can do better</div>
+				<div class="lt_value_2 _bg-orange">31&ndash;60%: okay, but you can do better</div>
 			</div>
 			<div>
-				<div class="lt_value_2 _bg-green">Great, you're ready to surf</div>
+				<div class="lt_value_2 _bg-green">61%+: great, you're ready to surf</div>
 			</div>
 		</div>
+		<p>A browser extension should reach 90% or more. A DNS filter on its own tops out near 60%, because it cannot pass the cosmetic and script checks.</p>
+	</div>
+</details>
+<details>
+	<summary>How do I know if I have an ad blocker, and which one?</summary>
+	<div>
+		<p>Run the test. A score above 60% means something on your device is blocking ads &mdash; a browser extension, a browser with blocking built in, a VPN, or a DNS filter. To find out which one:</p>
+		<ul class="keep-ls">
+			<li><b>Chrome, Brave, Edge, Opera</b>: open <code>chrome://extensions</code> (or <code>edge://extensions</code>) and look for uBlock Origin, AdGuard, AdBlock or Ghostery.</li>
+			<li><b>Firefox</b>: open <code>about:addons</code> and check Extensions.</li>
+			<li><b>Safari</b>: Settings &rarr; Extensions, on macOS and iOS both.</li>
+			<li><b>Brave and Opera</b> also block ads with no extension installed, from Shields and the built-in blocker.</li>
+		</ul>
+		<p>A DNS filter or a VPN-level blocker appears in none of those lists. If the test shows hosts blocked but the cosmetic and script checks failing, the blocking is happening at the network level &mdash; check your router, your Pi-hole, or your VPN app settings.</p>
+	</div>
+</details>
+<details>
+	<summary>Are you looking for a page full of ads to test your blocker?</summary>
+	<div>
+		<p>This is that page, with one difference: it never loads a real ad. The test uses ad-shaped decoy elements, two decoy scripts, and requests to real ad and tracker hostnames that never serve anything. You get a measurable result without funding an ad network or seeing a single advert.</p>
+		<p>To confirm your blocker on a genuinely ad-heavy site, open any large news site with your blocker off and then on. This page tells you whether blocking <em>works</em>; a real site tells you how broad its filter coverage is.</p>
 	</div>
 </details>
 <details>
 	<summary>Which ad blockers and DNS filters do you recommend?</summary>
 	<div>
-		<p>I use <a id="dnsfilter-link" href="https://www.dnsfilter.com/">DNSFilter</a> as my main DNS resolver, with <a href="https://nextdns.io/">NextDNS</a> as a great alternative for home users. On top of that I run these combos per platform:</p>
+		<p>I use <a href="https://www.dnsfilter.com/">DNSFilter</a> as my main DNS resolver, with <a href="https://nextdns.io/">NextDNS</a> as a great alternative for home users. Pi-hole and AdGuard Home are the self-hosted equivalents if you would rather run it yourself. On top of that I run these combos per platform:</p>
 		<ul class="keep-ls">
 			<li>Windows: Brave + uBlock Origin</li>
 			<li>macOS: Brave + uBlock Origin</li>
@@ -85,7 +106,7 @@
 		</ul>
 		<div class="_cnt-grid-wrap">
 			<a href="https://ublockorigin.com/" class="btn">uBlock Origin</a>
-			<a href="https://adguard.com/adguard-ios/overview.html" class="btn">AdGuard for iOS</a>
+			<a href="https://adguard.com/en/adguard-ios/overview.html" class="btn">AdGuard for iOS</a>
 		</div>
 		<p>Filter lists I recommend:</p>
 		<ul class="keep-ls">
@@ -103,7 +124,7 @@
 			<a href="https://canyoublockit.com/" class="btn" target="_blank" rel="noopener noreferrer">CanYouBlockIt</a>
 			<a href="https://ipleak.net/" class="btn" target="_blank" rel="noopener noreferrer">IP Leak</a>
 			<a href="https://blockads.fivefilters.org/" class="btn" target="_blank" rel="noopener noreferrer">Block Ads Test</a>
-			<a href="https://panopticlick.eff.org/" class="btn" target="_blank" rel="noopener noreferrer">Browser Fingerprint by EFF</a>
+			<a href="https://coveryourtracks.eff.org/" class="btn" target="_blank" rel="noopener noreferrer">Cover Your Tracks by EFF</a>
 			<a href="https://raymondhill.net/ublock/tiles1.html" class="btn" target="_blank" rel="noopener noreferrer">Adblock Testing by raymondhill</a>
 			<a href="https://raymondhill.net/ublock/popup.html" class="btn" target="_blank" rel="noopener noreferrer">Popup Blocker by raymondhill</a>
 		</div>

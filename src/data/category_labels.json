@@ -1,0 +1,8 @@
+{
+	"Ads": "Ad networks",
+	"Analytics": "Analytics and session recording",
+	"Error Trackers": "Error and crash reporting",
+	"Social Trackers": "Social network trackers",
+	"Mix": "Mixed ad and tracking networks",
+	"OEMs": "Device maker telemetry"
+}

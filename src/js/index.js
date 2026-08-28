@@ -1,5 +1,6 @@
 import '../sass/index.sass'
 import data from '../data/adblock_data.json'
+import CATEGORY_LABELS from '../data/category_labels.json'
 import packageJSON from '../../package.json'
 import { icons } from '../data/icons'
 import { navbar } from './components/navbar'
@@ -26,10 +27,19 @@ const DEFAULT_SETTINGS = {
 }
 const HOST_FETCH_TIMEOUT_MS = 8000
 const HOST_FETCH_CONCURRENCY = 50
+// Gecko on macOS stalls when many blocked requests are in flight at once, so it
+// gets a smaller window and a shorter timeout. Concurrency 1 was too defensive:
+// with 128 hosts and a 2.5 s timeout it took minutes to reach a verdict on a
+// blackhole resolver, which is exactly the Pi-hole/AdGuard Home setup this test
+// is used to check. Six keeps the stall away and bounds the run to ~1 minute.
 const FIREFOX_MAC_HOST_FETCH_TIMEOUT_MS = 2500
-const FIREFOX_MAC_HOST_FETCH_CONCURRENCY = 1
+const FIREFOX_MAC_HOST_FETCH_CONCURRENCY = 6
 const TASK_YIELD_INTERVAL = 10
-const FIREFOX_MAC_TASK_YIELD_INTERVAL = 1
+const FIREFOX_MAC_TASK_YIELD_INTERVAL = 5
+// The page is scroll-locked only while the cosmetic and script checks measure
+// element geometry. That window is ~1.2 s; the cap is a backstop so a hanging
+// measurement can never leave the page unscrollable.
+const SCROLL_LOCK_MAX_MS = 2500
 
 function isPlainObject(value) {
 	return value !== null && typeof value === 'object' && !Array.isArray(value)
@@ -116,12 +126,18 @@ async function runTasksWithConcurrency(
 function isFirefoxBasedMac() {
 	const ua = navigator.userAgent || ''
 	const platform = navigator.platform || ''
+	// Every iOS user agent contains the literal "like Mac OS X", and Firefox for
+	// iOS reports "FxiOS/". Without this guard both of those match and iPhones
+	// and iPads get throttled to the Gecko workaround, which they do not need:
+	// Firefox on iOS is WebKit and cannot have the Gecko stall.
+	const isIOS = /iPhone|iPad|iPod|FxiOS|CriOS|EdgiOS/.test(ua)
+	if (isIOS) return false
 	const isFirefoxFamily =
-		/\b(Firefox|FxiOS|Waterfox|LibreWolf|IceCat|PaleMoon)\//.test(ua)
+		/\b(Firefox|Waterfox|LibreWolf|IceCat|PaleMoon)\//.test(ua)
 	const isGecko =
 		/\bGecko\/\d/.test(ua) &&
 		!/AppleWebKit|Chrome|Chromium|Edg|OPR|Safari/.test(ua)
-	const isMac = /Mac/.test(platform) || /Mac OS X/.test(ua)
+	const isMac = /MacIntel|MacPPC|Mac68K/.test(platform) || /Macintosh/.test(ua)
 
 	return (isFirefoxFamily || isGecko) && isMac
 }
@@ -356,8 +372,14 @@ async function fetchTests() {
 		const catEl = document.createElement('div')
 		catEl.className = 'grid'
 		catEl.id = key
+		// Display label only. The data key stays as-is because it is also the
+		// element id and the key stored in saved results.
 		catEl.innerHTML =
-			'<div><h2>' + icons[key] + '&nbsp;&nbsp;' + key + '</h2></div>'
+			'<div><h2>' +
+			icons[key] +
+			'&nbsp;&nbsp;' +
+			(CATEGORY_LABELS[key] || key) +
+			'</h2></div>'
 		testWrapper.appendChild(catEl)
 		const category = data[key]
 		let total_hosts = 0
@@ -512,8 +534,22 @@ function showCategoryState(categorySelector, isVisible) {
 	if (element) element.style.display = isVisible ? '' : 'none'
 }
 
-async function startAdBlockTesting() {
+let scrollLockTimer = null
+function lockScroll() {
 	document.body.classList.add('_overflowhidden')
+	if (scrollLockTimer) clearTimeout(scrollLockTimer)
+	scrollLockTimer = setTimeout(unlockScroll, SCROLL_LOCK_MAX_MS)
+}
+function unlockScroll() {
+	if (scrollLockTimer) {
+		clearTimeout(scrollLockTimer)
+		scrollLockTimer = null
+	}
+	document.body.classList.remove('_overflowhidden')
+}
+
+async function startAdBlockTesting() {
+	lockScroll()
 	resetTestState()
 	testWrapper.innerHTML = ''
 	test_log.innerHTML = ''
@@ -531,22 +567,30 @@ async function startAdBlockTesting() {
 
 	document.querySelector('.lt_wrap').classList.add('start')
 	lt_cwrap.classList.add('start')
-	let tests = []
+	// Only these checks read element geometry, so only these need the page held
+	// still. The host sweep does not, and it is the part that takes seconds.
+	const measured = []
 	if (settings['showCF'] === true) {
 		showCategoryState('#cf_wrap', true)
-		tests.push(cosmetic_test_static())
-		tests.push(cosmetic_test_dynamic())
+		measured.push(cosmetic_test_static())
+		measured.push(cosmetic_test_dynamic())
 	} else {
 		showCategoryState('#cf_wrap', false)
 	}
 	if (settings['showSL'] === true) {
 		showCategoryState('#sl_wrap', true)
-		tests.push(ad_script_test())
+		measured.push(ad_script_test())
 	} else {
 		showCategoryState('#sl_wrap', false)
 	}
 
-	tests.push(fetchTests())
+	// Hand scrolling back the moment the measurement window closes rather than
+	// after every host has answered. Both arms release, so a rejected check
+	// cannot strand the lock, and it never becomes an unhandled rejection —
+	// Promise.all(tests) below is what actually surfaces the error.
+	Promise.all(measured).then(unlockScroll, unlockScroll)
+
+	const tests = measured.concat([fetchTests()])
 	await Promise.all(tests)
 }
 
@@ -564,14 +608,12 @@ function set_liquid() {
 }
 
 function stopAdBlockTesting() {
+	unlockScroll()
 	if (lt_particles) {
 		fadeOut(lt_particles, () => {
 			document.querySelector('.lt_wrap').classList.remove('start')
 			fadeIn(lt_particles, 'flex')
-			document.body.classList.remove('_overflowhidden')
 		})
-	} else {
-		document.body.classList.remove('_overflowhidden')
 	}
 	if (lt_cwrap) lt_cwrap.classList.remove('start')
 }
@@ -741,10 +783,11 @@ document.addEventListener('DOMContentLoaded', function () {
 	document.querySelector('#start_test').addEventListener('click', () => {
 		location.reload()
 	})
-	const stxt =
-		'https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.txt'
-	const sadblock =
-		'https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.adblock'
+	// First-party URLs on purpose: these are the addresses people paste into
+	// Pi-hole, uBlock and OISD, so they should cite this domain instead of a
+	// raw.githubusercontent.com path tied to one repository name.
+	const stxt = 'https://adblock.turtlecute.org/d3host.txt'
+	const sadblock = 'https://adblock.turtlecute.org/d3host.adblock'
 	document
 		.querySelector('#hostListTxt')
 		.addEventListener('click', function () {

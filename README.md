@@ -33,10 +33,10 @@ I cleaned, modernized, and debloated [d3ward's original project](https://github.
 
 ## Host lists
 
-Two formats if your blocker isn't catching enough:
+Two formats if your blocker isn't catching enough. Subscribe to these URLs:
 
-- [`d3host.txt`](https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.txt) (hosts file)
-- [`d3host.adblock`](https://raw.githubusercontent.com/Turtlecute33/adblocktest/master/src/d3host.adblock) (adblock syntax)
+- [`d3host.txt`](https://adblock.turtlecute.org/d3host.txt) (hosts file) — covers the **Host** category only. A hosts file cannot pass the cosmetic filter or ad script checks, so pair it with a browser extension for a full score.
+- [`d3host.adblock`](https://adblock.turtlecute.org/d3host.adblock) (adblock syntax) — covers every category, because it also carries the cosmetic and script rules.
 
 The list ships with [Blokada](https://blokada.org/) and the [OISD List](https://oisd.nl/).
 
@@ -49,8 +49,6 @@ npm install
 npm run dev      # webpack dev server
 npm run build    # production build to /dist
 ```
-
-When homepage content changes, update its `<lastmod>` value in `src/sitemap.xml` before deploying.
 
 ## Contributing
 

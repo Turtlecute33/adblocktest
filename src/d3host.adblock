@@ -1,11 +1,11 @@
 ! Title: Turtlecute Host List
 ! Expires: 1 days
 ! Description: Simple and small list with the most popular advertising, tracking, analytics and social advertising services
-! Homepage: https://github.com/Turtlecute33/adblocktest
+! Homepage: https://adblock.turtlecute.org
 ! License: CC BY-NC-SA
-! Source: https://github.com/Turtlecute33/adblocktest/blob/master/src/d3host.adblock
+! Source: https://adblock.turtlecute.org/d3host.adblock
 
-! This list cover all the tests on https://adblock.turtlecute.org
+! Covers every category on https://adblock.turtlecute.org, including the cosmetic filter and ad script checks.
 ! Type : Stable
 ! Entries : 129
 ! Updated On: 17/3/2026

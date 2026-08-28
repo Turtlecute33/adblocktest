@@ -78,7 +78,10 @@
                     <form method="POST" action="https://btcpay.priorato.org/api/v1/invoices" class="btcpay-form btcpay-form--block">
                         <input type="hidden" name="storeId" value="2B1STLH5REvhHZBRQuyJNieRTexpeuJ4Usjn4ziEfEfd" />
                         <input type="hidden" name="currency" value="EUR" />
-                        <input type="image" class="submit" name="submit" src="https://btcpay.priorato.org/img/paybutton/pay.svg" style="width:auto;height: 90%;" alt="Pay with BTCPay Server, a Self-Hosted Bitcoin Payment Processor">
+                        <!-- Served from this origin on purpose. <input type="image"> has no
+                             lazy loading, so a remote src would hand the payment host every
+                             visitor's IP, UA and Referer on page load, before any click. -->
+                        <input type="image" class="submit" name="submit" src="/assets/btcpay/pay.svg" style="width:auto;height: 90%;" alt="Pay with BTCPay Server, a Self-Hosted Bitcoin Payment Processor">
                     </form>
                 </div>
 

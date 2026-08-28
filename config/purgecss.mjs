@@ -17,6 +17,10 @@ const options = pages.map((page) => {
 	}
 })
 
+// The banner_wide / banner_narrow entries exist only to emit their stylesheets.
+// Their JS bundles are never referenced by any page, so drop them from dist.
+const STUB_BUNDLES = ['js/banner_wide.js', 'js/banner_narrow.js']
+
 Promise.all(options.map((option) => new PurgeCSS().purge(option))).then(
 	(results) => {
 		results.forEach((result, i) => {
@@ -31,6 +35,13 @@ Promise.all(options.map((option) => new PurgeCSS().purge(option))).then(
 			)
 			console.log(`Optimized size: ${(css.length / 1024).toFixed(2)}KB`)
 			fs.writeFileSync(cssFile, css)
+		})
+		STUB_BUNDLES.forEach((rel) => {
+			const file = path.join(config.build, rel)
+			if (fs.existsSync(file)) {
+				fs.unlinkSync(file)
+				console.log(chalk.gray(`Removed unreferenced stub: ${rel}`))
+			}
 		})
 	}
 )
