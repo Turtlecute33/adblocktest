@@ -3,13 +3,14 @@
 // Every static handle this placement ever exposed ended up in EasyList and
 // AdGuard Base as a domain-scoped rule: first the asset path
 // (||turtlecute.org/assets/partners/), then two wrapper classes
-// (turtlecute.org##.sponsor_banner_wrap, turtlecute.org##.collab_wrap), and now
-// the destination itself (turtlecute.org##a[href^="https://shockvpn.com/?"]).
+// (turtlecute.org##.sponsor_banner_wrap, turtlecute.org##.collab_wrap), then
+// the destination itself (turtlecute.org##a[href^="https://shockvpn.com/?"]),
+// and then the link's rel (adblock.turtlecute.org##.notice_stack > a[rel$="sponsored"]).
 //
 // A filter rule can only name something that is identical on every visit, so
 // nothing here is. The class names, the creative URL and the delivery mechanism
-// are drawn fresh on each page load, the destination is absent from the DOM
-// until the visitor actually interacts, and the node rebuilds itself under new
+// are drawn fresh on each page load, the destination never enters the DOM,
+// and the node rebuilds itself under new
 // names if something hides it. This module also lives in the same bundle as the
 // test itself, so the bundle cannot be blocked without breaking the product.
 //
@@ -63,8 +64,10 @@ function styleSheetFor(cls, mode) {
 		`.${cls}{display:block;overflow:hidden;width:100%;line-height:0;` +
 		`text-decoration:none;border-radius:var(--r-lg);` +
 		`aspect-ratio:1940/240;${paint}` +
-		// .i_box is carried for camouflage (see mount); neutralise its box.
-		`padding:0;border:0;background-color:transparent;}` +
+		// .i_box is carried for camouflage (see mount); neutralise its box, and
+		// the global button styles (a fixed height would defeat aspect-ratio).
+		`padding:0;border:0;background-color:transparent;` +
+		`height:auto;box-shadow:none;cursor:pointer;}` +
 		`.${cls}>img{display:block;width:100%;height:100%;object-fit:cover;}` +
 		`.${cls}:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}` +
 		`@media (max-width:48em){.${cls}{aspect-ratio:1200/400;}}`
@@ -147,40 +150,27 @@ export class Sponsor {
 		this.styleNode.textContent = styleSheetFor(cls, mode)
 		document.head.appendChild(this.styleNode)
 
-		const link = document.createElement('a')
+		const link = document.createElement('button')
 		// .i_box is deliberate: the accuracy caveat and the GitHub ask carry it
 		// too, so a rule written against it takes both of those down as well.
 		// The random class above neutralises everything .i_box paints.
 		link.className = `i_box ${cls}`
+		link.type = 'button'
 		link.setAttribute('role', 'link')
-		link.setAttribute('tabindex', '0')
-		link.setAttribute('target', '_blank')
-		link.setAttribute('rel', 'noopener noreferrer sponsored')
 		link.setAttribute('aria-label', LABEL)
 		link.setAttribute('data-umami-event', UMAMI_EVENT)
 		link.setAttribute('data-umami-event-partner', UMAMI_PARTNER)
 
-		// href is attached on first interaction rather than at render, because
-		// the rule in force right now matches the destination prefix. Setting it
-		// on pointerdown and focusin means the native behaviours that depend on
-		// it — middle click, ctrl-click, Enter, the status bar preview, "copy
-		// link address" — all still work, while the resting DOM has no href.
-		const attach = () => {
-			if (!link.getAttribute('href')) link.setAttribute('href', DESTINATION)
-		}
-		// No hover handler on purpose: hover fires long before intent, and an
-		// href sitting in the DOM from the moment the pointer crosses the element
-		// is an href a procedural rule can still see on mutation.
-		link.addEventListener('pointerdown', attach)
-		link.addEventListener('touchstart', attach, { passive: true })
-		link.addEventListener('focusin', attach)
-		// Keyboard activation on an <a> without an href does nothing natively,
-		// and focusin may not have fired if focus was moved programmatically.
-		link.addEventListener('keydown', (event) => {
-			if (event.key !== 'Enter' && event.key !== ' ') return
-			event.preventDefault()
-			attach()
-			window.open(DESTINATION, '_blank', 'noopener,noreferrer')
+		// No href and no rel, at rest or on interaction. Both are rule targets,
+		// and an href attached on pointerdown was matched by the href rule before
+		// the click landed, so the click went nowhere. With no href this is not a
+		// crawlable link, so rel="sponsored" has nothing to qualify. A <button>
+		// rather than an <a>: Umami tracks a button from its data attributes but
+		// skips an <a> with no href. Enter and Space on a button arrive as click.
+		const open = () => window.open(DESTINATION, '_blank', 'noopener,noreferrer')
+		link.addEventListener('click', open)
+		link.addEventListener('auxclick', (event) => {
+			if (event.button === 1) open()
 		})
 
 		if (mode === 'image') {
