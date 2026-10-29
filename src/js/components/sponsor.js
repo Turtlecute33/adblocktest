@@ -5,7 +5,9 @@
 // (||turtlecute.org/assets/partners/), then two wrapper classes
 // (turtlecute.org##.sponsor_banner_wrap, turtlecute.org##.collab_wrap), then
 // the destination itself (turtlecute.org##a[href^="https://shockvpn.com/?"]),
-// and then the link's rel (adblock.turtlecute.org##.notice_stack > a[rel$="sponsored"]).
+// then the link's rel (adblock.turtlecute.org##.notice_stack > a[rel$="sponsored"]),
+// and then the Umami attribute
+// (adblock.turtlecute.org##.notice_stack > button[data-umami-event*="banner"]).
 //
 // A filter rule can only name something that is identical on every visit, so
 // nothing here is. The class names, the creative URL and the delivery mechanism
@@ -158,16 +160,18 @@ export class Sponsor {
 		link.type = 'button'
 		link.setAttribute('role', 'link')
 		link.setAttribute('aria-label', LABEL)
-		link.setAttribute('data-umami-event', UMAMI_EVENT)
-		link.setAttribute('data-umami-event-partner', UMAMI_PARTNER)
 
 		// No href and no rel, at rest or on interaction. Both are rule targets,
 		// and an href attached on pointerdown was matched by the href rule before
 		// the click landed, so the click went nowhere. With no href this is not a
-		// crawlable link, so rel="sponsored" has nothing to qualify. A <button>
-		// rather than an <a>: Umami tracks a button from its data attributes but
-		// skips an <a> with no href. Enter and Space on a button arrive as click.
-		const open = () => window.open(DESTINATION, '_blank', 'noopener,noreferrer')
+		// crawlable link, so rel="sponsored" has nothing to qualify. Enter and
+		// Space on a button arrive as click.
+		// No data-umami-* attributes either: the lists matched
+		// button[data-umami-event*="banner"], so the event is sent from here.
+		const open = () => {
+			window.open(DESTINATION, '_blank', 'noopener,noreferrer')
+			window.umami?.track?.(UMAMI_EVENT, { partner: UMAMI_PARTNER })
+		}
 		link.addEventListener('click', open)
 		link.addEventListener('auxclick', (event) => {
 			if (event.button === 1) open()
