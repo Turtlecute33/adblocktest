@@ -60,8 +60,10 @@ jobs:
           done
           # The sponsor creative ships as two content-hashed async chunks with no
           # fixed name, so check that both were emitted rather than naming them.
-          [ "$(find dist/js -maxdepth 1 -name '*.js' ! -name 'index.js' ! -name '404.js' ! -name 'pagead.js' | wc -l)" -ge 2 ] \
-            || fail "sponsor creative chunks missing from dist/js"
+          # They sit in the dist root, not dist/js: ||adblock.turtlecute.org/js/*ad
+          # blocks any js/ chunk whose hex hash contains "ad".
+          [ "$(find dist -maxdepth 1 -name '*.js' | wc -l)" -ge 2 ] \
+            || fail "sponsor creative chunks missing from dist"
           # The sponsor must not be reachable from the markup: everything about it
           # that ever shipped as static HTML got a filter rule written against it.
           if grep -q 'shockvpn' dist/index.html; then fail "sponsor destination leaked into the markup"; fi

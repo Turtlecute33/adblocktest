@@ -6,8 +6,9 @@
 // (turtlecute.org##.sponsor_banner_wrap, turtlecute.org##.collab_wrap), then
 // the destination itself (turtlecute.org##a[href^="https://shockvpn.com/?"]),
 // then the link's rel (adblock.turtlecute.org##.notice_stack > a[rel$="sponsored"]),
-// and then the Umami attribute
-// (adblock.turtlecute.org##.notice_stack > button[data-umami-event*="banner"]).
+// then the Umami attribute
+// (adblock.turtlecute.org##.notice_stack > button[data-umami-event*="banner"]),
+// and then the inline background (adblock.turtlecute.org##button[style*="data:image"]).
 //
 // A filter rule can only name something that is identical on every visit, so
 // nothing here is. The class names, the creative URL and the delivery mechanism
@@ -54,13 +55,16 @@ function randomToken() {
 	return token
 }
 
-function styleSheetFor(cls, mode) {
+function styleSheetFor(cls, mode, creative) {
 	// The geometry that used to live in .hero_feature. Written out here rather
 	// than kept in index.css because a class in the stylesheet is a class a rule
 	// can name; this one only exists for the lifetime of one page load.
+	// The background creative goes here too, not in a style attribute: the lists
+	// matched button[style*="data:image"].
 	const paint =
 		mode === 'background'
-			? 'background-position:center;background-size:100% 100%;background-repeat:no-repeat;'
+			? `background-image:url("${creative}");background-position:center;` +
+			  'background-size:100% 100%;background-repeat:no-repeat;'
 			: ''
 	return (
 		`.${cls}{display:block;overflow:hidden;width:100%;line-height:0;` +
@@ -149,7 +153,7 @@ export class Sponsor {
 		const mode = Math.random() < 0.5 ? 'image' : 'background'
 
 		this.styleNode = document.createElement('style')
-		this.styleNode.textContent = styleSheetFor(cls, mode)
+		this.styleNode.textContent = styleSheetFor(cls, mode, this.creative)
 		document.head.appendChild(this.styleNode)
 
 		const link = document.createElement('button')
@@ -184,8 +188,6 @@ export class Sponsor {
 			img.alt = ''
 			img.decoding = 'async'
 			link.appendChild(img)
-		} else {
-			link.style.backgroundImage = `url("${this.creative}")`
 		}
 
 		this.mount.insertBefore(link, this.mount.firstChild)

@@ -16,8 +16,10 @@ module.exports = {
 		filename: 'js/[name].js',
 		// The sponsor creative is an async chunk (see js/components/sponsor.js),
 		// so its request URL is a content hash that changes on every deploy and
-		// carries no word worth writing a network rule against.
-		chunkFilename: 'js/[contenthash].js',
+		// carries no word worth writing a network rule against. Not under js/:
+		// the lists block ||adblock.turtlecute.org/js/*ad, and a hex hash can
+		// contain "ad".
+		chunkFilename: '[contenthash].js',
 		path: config.build,
 		clean: false,
 		assetModuleFilename: '[path][name][ext]',
