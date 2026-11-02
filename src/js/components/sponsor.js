@@ -9,39 +9,42 @@
 // then the Umami attribute
 // (adblock.turtlecute.org##.notice_stack > button[data-umami-event*="banner"]),
 // then the inline background (adblock.turtlecute.org##button[style*="data:image"]),
-// and then the element itself (turtlecute.org##.notice_stack > button[role="link"][aria-label]).
+// then the element itself (turtlecute.org##.notice_stack > button[role="link"][aria-label]),
+// and then, inside the shadow root, its role and its image
+// (adblock.turtlecute.org##[role="link"], adblock.turtlecute.org##[src*="blob:"])
+// plus the new tab it opened (||shockvpn.com^$popup,domain=turtlecute.org).
 //
-// A filter rule can only name something that is identical on every visit, so
-// nothing here is. The class names, the creative URL and the delivery mechanism
-// are drawn fresh on each page load, the destination never enters the DOM,
-// and the node rebuilds itself under new
-// names if something hides it. This module also lives in the same bundle as the
-// test itself, so the bundle cannot be blocked without breaking the product.
+// The placement renders inside a closed shadow root on the mount. Blockers
+// inject cosmetic rules as user-origin stylesheets, and those do apply inside
+// shadow trees, so the root alone hides nothing. A selector cannot cross the
+// boundary, though (.notice_stack > anything stops matching), and procedural
+// filters (:has-text, :matches-css) query from the document and cannot see in.
 //
-// The placement renders inside a closed shadow root on the mount, ahead of a
-// slot that shows the mount's own children. Cosmetic rules match the document
-// tree only, so they cannot see the placement, and the mount's light DOM stays
-// exactly what the template ships. To hide it, a rule must hide the whole mount
-// (the caveat and the GitHub ask go with it) or patch attachShadow from a scriptlet.
+// So the tree gives a plain selector nothing to tell apart. The caveat, the
+// GitHub ask and the placement each sit in an identical cell: a <div> that holds
+// a <slot> and a <button> with text, each node with only a class drawn fresh on
+// every load. The cells are in random order, and CSS order puts the placement
+// first. The creative is a background from the run-time stylesheet, and the
+// other two buttons are display:none from there. Slots are assigned by hand, so
+// the light DOM gets no slot attributes and stays what the template ships. A
+// rule that hides the placement also hides the caveat and the GitHub ask.
 //
 // See REBUILD_LIMIT: this gives up rather than looping forever. A rule that
 // survives a handful of rebuilds has won that page load, and spinning would
 // only cost the visitor battery.
 
-// Two creatives, one per breakpoint, imported dynamically so a visitor
-// downloads the one that matches. Webpack emits each as its own content-hashed
-// chunk, which means the request URL changes on every deploy.
-const CREATIVES = {
-	wide: () => import('../../media/wide.webp'),
-	narrow: () => import('../../media/narrow.webp')
-}
+// Both creatives are inlined into the main bundle, which also runs the test, so
+// a network rule cannot block them without breaking the test. As async chunks
+// they had content-hash names that only changed with the image, and a network
+// rule could name them.
+import wide from '../../media/wide.webp'
+import narrow from '../../media/narrow.webp'
 
 const DESTINATION = 'https://shockvpn.com/?utm_source=adblock.turtlecute.org'
-const LABEL = 'Learn more about ShockVPN (opens in a new tab)'
+const LABEL = 'Learn more about ShockVPN'
 const UMAMI_EVENT = 'ShockVPN banner click'
 const UMAMI_PARTNER = 'ShockVPN'
 
-const WIDE_QUERY = '(min-width: 48.0625em)'
 const REBUILD_LIMIT = 5
 // A cosmetic rule applies before first paint, a procedural one can take a frame
 // or two, and a rule shipped mid-session arrives whenever the list updates.
@@ -62,27 +65,37 @@ function randomToken() {
 	return token
 }
 
-function styleSheetFor(cls, mode, creative) {
+function shuffle(list) {
+	const bytes = new Uint32Array(list.length)
+	crypto.getRandomValues(bytes)
+	for (let i = list.length - 1; i > 0; i--) {
+		const j = bytes[i] % (i + 1)
+		const swap = list[i]
+		list[i] = list[j]
+		list[j] = swap
+	}
+	return list
+}
+
+function styleSheetFor(cells) {
 	// The geometry that used to live in .hero_feature. It lives in the shadow
 	// root: document styles do not reach in, and a class in index.css is a class
-	// a rule can name. The class only exists for the lifetime of one page load.
-	// The background creative goes here too, not in a style attribute: the lists
-	// matched button[style*="data:image"].
-	const paint =
-		mode === 'background'
-			? `background-image:url("${creative}");background-position:center;` +
-			  'background-size:100% 100%;background-repeat:no-repeat;'
-			: ''
-	return (
-		`.${cls}{display:block;overflow:hidden;width:100%;line-height:0;` +
-		`text-decoration:none;border-radius:var(--r-lg);` +
-		`aspect-ratio:1940/240;${paint}` +
-		// Neutralise the user-agent button box.
-		`padding:0;border:0;background-color:transparent;cursor:pointer;}` +
-		`.${cls}>img{display:block;width:100%;height:100%;object-fit:cover;}` +
-		`.${cls}:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}` +
-		`@media (max-width:48em){.${cls}{aspect-ratio:1200/400;}}`
-	)
+	// a rule can name. The creative goes here too, not in a style attribute or an
+	// <img src>: the lists matched button[style*="data:image"] and [src*="blob:"].
+	return cells
+		.map(({ wrap, button, order, sponsor }) =>
+			sponsor
+				? `.${wrap}{order:${order};position:relative;overflow:hidden;` +
+				  `border-radius:var(--r-lg);aspect-ratio:1940/240;cursor:pointer;` +
+				  `background:url("${wide}") center/100% 100% no-repeat;}` +
+				  `.${wrap}:has(.${button}:focus-visible){outline:2px solid var(--focus);outline-offset:3px;}` +
+				  // The accessible name and the keyboard target, visually hidden.
+				  `.${button}{position:absolute;width:1px;height:1px;padding:0;border:0;` +
+				  `overflow:hidden;clip-path:inset(50%);white-space:nowrap;}` +
+				  `@media (max-width:48em){.${wrap}{aspect-ratio:1200/400;background-image:url("${narrow}");}}`
+				: `.${wrap}{order:${order};}.${button}{display:none;}`
+		)
+		.join('')
 }
 
 function isHidden(el) {
@@ -90,113 +103,104 @@ function isHidden(el) {
 	const cs = getComputedStyle(el)
 	if (cs.display === 'none' || cs.visibility === 'hidden') return true
 	if (parseFloat(cs.opacity) === 0) return true
+	// A :style() rule can strip the creative and leave an empty box.
+	if (!cs.backgroundImage.includes('url(')) return true
 	return !(el.offsetWidth || el.offsetHeight || el.getClientRects().length)
-}
-
-// Turning the inlined creative into a blob: URL gives it a per-load random
-// address, so neither a src pattern nor a data: prefix matches. Falls back to
-// the data URI the import already produced if Blob construction is unavailable.
-async function toBlobUrl(dataUri) {
-	try {
-		const response = await fetch(dataUri)
-		const blob = await response.blob()
-		return URL.createObjectURL(blob)
-	} catch (error) {
-		return dataUri
-	}
 }
 
 export class Sponsor {
 	constructor(mountSelector) {
 		this.mount = document.querySelector(mountSelector)
 		this.root = null
+		this.items = []
+		this.anchor = null
 		this.rebuilds = 0
 		this.node = null
-		this.styleNode = null
-		this.blobUrl = null
 		this.observer = null
 		this.timers = []
-		this.creative = null
 	}
 
 	async start() {
-		if (!this.mount) return
-		const wide = window.matchMedia(WIDE_QUERY).matches
-		const module = await (wide ? CREATIVES.wide() : CREATIVES.narrow())
-		this.creative = module.default
-		this.root = this.mount.attachShadow({ mode: 'closed' })
-		this.root.appendChild(document.createElement('slot'))
+		// Without manual slot assignment, skip the placement: a root that cannot
+		// show the mount's children would hide the caveat and the GitHub ask.
+		if (!this.mount || !('assign' in HTMLSlotElement.prototype)) return
+		this.items = [...this.mount.children]
+		// The placement's slot gets an empty text node, so every slot has
+		// something assigned and :has-slotted cannot tell them apart.
+		this.anchor = document.createTextNode('')
+		this.mount.append(this.anchor)
+		this.root = this.mount.attachShadow({
+			mode: 'closed',
+			slotAssignment: 'manual'
+		})
 		this.render()
 	}
 
-	teardown() {
+	stopWatching() {
 		this.timers.forEach(clearTimeout)
 		this.timers = []
 		if (this.observer) {
 			this.observer.disconnect()
 			this.observer = null
 		}
-		if (this.blobUrl) {
-			URL.revokeObjectURL(this.blobUrl)
-			this.blobUrl = null
-		}
-		if (this.styleNode) {
-			this.styleNode.remove()
-			this.styleNode = null
-		}
-		if (this.node) {
-			this.node.remove()
-			this.node = null
-		}
 	}
 
-	async render() {
-		this.teardown()
+	render() {
+		this.stopWatching()
 
-		const cls = randomToken()
-		// Alternate the delivery between an <img> holding a blob: URL and a
-		// background-image holding the data URI. Neither ##img[src^="blob:"] nor
-		// :matches-css(background-image,...) catches both, so a rule that works
-		// on one load misses the next.
-		const mode = Math.random() < 0.5 ? 'image' : 'background'
+		const tokens = new Set()
+		const count = 2 * (this.items.length + 1)
+		while (tokens.size < count) tokens.add(randomToken())
+		const names = [...tokens]
+		// Placement first, then the mount's children in template order.
+		const cells = [this.anchor, ...this.items].map((node, order) => ({
+			node,
+			order,
+			sponsor: node === this.anchor,
+			wrap: names[2 * order],
+			button: names[2 * order + 1],
+			slot: document.createElement('slot')
+		}))
 
-		this.styleNode = document.createElement('style')
-		this.styleNode.textContent = styleSheetFor(cls, mode, this.creative)
-		this.root.prepend(this.styleNode)
+		const style = document.createElement('style')
+		style.textContent = styleSheetFor(cells)
 
-		const link = document.createElement('button')
-		link.className = cls
-		link.type = 'button'
-		link.setAttribute('role', 'link')
-		link.setAttribute('aria-label', LABEL)
+		const wraps = cells.map((cell) => {
+			const wrap = document.createElement('div')
+			wrap.className = cell.wrap
+			const button = document.createElement('button')
+			button.className = cell.button
+			button.textContent = LABEL
+			wrap.append(cell.slot, button)
+			if (cell.sponsor) this.node = wrap
+			return wrap
+		})
 
 		// No href and no rel, at rest or on interaction. Both are rule targets,
 		// and an href attached on pointerdown was matched by the href rule before
-		// the click landed, so the click went nowhere. With no href this is not a
-		// crawlable link, so rel="sponsored" has nothing to qualify. Enter and
-		// Space on a button arrive as click.
+		// the click landed, so the click went nowhere. Enter and Space on the
+		// hidden button arrive as a click that bubbles to the cell.
 		// No data-umami-* attributes either: the lists matched
 		// button[data-umami-event*="banner"], so the event is sent from here.
-		const open = () => {
-			window.open(DESTINATION, '_blank', 'noopener,noreferrer')
+		// A plain click navigates this tab: the $popup rule closes any new tab
+		// opened toward the destination, and it does not apply to the page's own
+		// navigation. Ctrl/Cmd-click and middle-click still ask for a new tab.
+		// The tracker sends with keepalive, so the event survives the navigation.
+		const open = (newTab) => {
 			window.umami?.track?.(UMAMI_EVENT, { partner: UMAMI_PARTNER })
+			if (newTab)
+				window.open(DESTINATION, '_blank', 'noopener,noreferrer')
+			else window.location.assign(DESTINATION)
 		}
-		link.addEventListener('click', open)
-		link.addEventListener('auxclick', (event) => {
-			if (event.button === 1) open()
+		this.node.addEventListener('click', (event) =>
+			open(event.ctrlKey || event.metaKey)
+		)
+		this.node.addEventListener('auxclick', (event) => {
+			if (event.button === 1) open(true)
 		})
 
-		if (mode === 'image') {
-			this.blobUrl = await toBlobUrl(this.creative)
-			const img = document.createElement('img')
-			img.src = this.blobUrl
-			img.alt = ''
-			img.decoding = 'async'
-			link.appendChild(img)
-		}
-
-		this.root.prepend(link)
-		this.node = link
+		this.root.replaceChildren(style, ...shuffle(wraps))
+		cells.forEach((cell) => cell.slot.assign(cell.node))
 		this.watch()
 	}
 
@@ -230,7 +234,12 @@ export class Sponsor {
 		if (!this.node) return
 		if (!isHidden(this.node)) return
 		if (this.rebuilds >= REBUILD_LIMIT) {
-			this.teardown()
+			// Drop the placement cell only. The other cells stay as they are: if
+			// the winning rule hid them too, putting them back would make that
+			// rule free to write.
+			this.stopWatching()
+			this.node.remove()
+			this.node = null
 			return
 		}
 		this.rebuilds += 1

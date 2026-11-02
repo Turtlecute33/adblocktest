@@ -60,7 +60,8 @@ main
 			padding-top: .25rem
 			padding-bottom: .25rem
 // The sponsor renders at run time inside a closed shadow root on this element,
-// ahead of a slot that holds the two info bars, so it is a flex item here. Its
+// in a cell next to the cells that hold the two info bars, so the cells are
+// the flex items here. Its
 // own geometry ships in that shadow root, not from here: a class that exists in
 // index.css is a class a cosmetic rule can name. See js/components/sponsor.js.
 .notice_stack

@@ -14,11 +14,10 @@ module.exports = {
 	},
 	output: {
 		filename: 'js/[name].js',
-		// The sponsor creative is an async chunk (see js/components/sponsor.js),
-		// so its request URL is a content hash that changes on every deploy and
-		// carries no word worth writing a network rule against. Not under js/:
-		// the lists block ||adblock.turtlecute.org/js/*ad, and a hex hash can
-		// contain "ad".
+		// No async chunks at present: the sponsor creatives are inlined into the
+		// main bundle (see js/components/sponsor.js). Any future chunk goes to
+		// the dist root, not js/: the lists block ||adblock.turtlecute.org/js/*ad,
+		// and a hex hash can contain "ad".
 		chunkFilename: '[contenthash].js',
 		path: config.build,
 		clean: false,
