@@ -59,10 +59,10 @@ main
 		>div
 			padding-top: .25rem
 			padding-bottom: .25rem
-// The sponsor is inserted here at run time as a first child, sharing .i_box with
-// the two info bars. Its own geometry ships in a run-time stylesheet keyed to a
-// per-load class name, not from here: a class that exists in index.css is a
-// class a cosmetic rule can name. See js/components/sponsor.js.
+// The sponsor renders at run time inside a closed shadow root on this element,
+// ahead of a slot that holds the two info bars, so it is a flex item here. Its
+// own geometry ships in that shadow root, not from here: a class that exists in
+// index.css is a class a cosmetic rule can name. See js/components/sponsor.js.
 .notice_stack
 	display: flex
 	flex-direction: column

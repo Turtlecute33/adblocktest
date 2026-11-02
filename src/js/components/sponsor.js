@@ -8,7 +8,8 @@
 // then the link's rel (adblock.turtlecute.org##.notice_stack > a[rel$="sponsored"]),
 // then the Umami attribute
 // (adblock.turtlecute.org##.notice_stack > button[data-umami-event*="banner"]),
-// and then the inline background (adblock.turtlecute.org##button[style*="data:image"]).
+// then the inline background (adblock.turtlecute.org##button[style*="data:image"]),
+// and then the element itself (turtlecute.org##.notice_stack > button[role="link"][aria-label]).
 //
 // A filter rule can only name something that is identical on every visit, so
 // nothing here is. The class names, the creative URL and the delivery mechanism
@@ -16,6 +17,12 @@
 // and the node rebuilds itself under new
 // names if something hides it. This module also lives in the same bundle as the
 // test itself, so the bundle cannot be blocked without breaking the product.
+//
+// The placement renders inside a closed shadow root on the mount, ahead of a
+// slot that shows the mount's own children. Cosmetic rules match the document
+// tree only, so they cannot see the placement, and the mount's light DOM stays
+// exactly what the template ships. To hide it, a rule must hide the whole mount
+// (the caveat and the GitHub ask go with it) or patch attachShadow from a scriptlet.
 //
 // See REBUILD_LIMIT: this gives up rather than looping forever. A rule that
 // survives a handful of rebuilds has won that page load, and spinning would
@@ -56,9 +63,9 @@ function randomToken() {
 }
 
 function styleSheetFor(cls, mode, creative) {
-	// The geometry that used to live in .hero_feature. Written out here rather
-	// than kept in index.css because a class in the stylesheet is a class a rule
-	// can name; this one only exists for the lifetime of one page load.
+	// The geometry that used to live in .hero_feature. It lives in the shadow
+	// root: document styles do not reach in, and a class in index.css is a class
+	// a rule can name. The class only exists for the lifetime of one page load.
 	// The background creative goes here too, not in a style attribute: the lists
 	// matched button[style*="data:image"].
 	const paint =
@@ -70,10 +77,8 @@ function styleSheetFor(cls, mode, creative) {
 		`.${cls}{display:block;overflow:hidden;width:100%;line-height:0;` +
 		`text-decoration:none;border-radius:var(--r-lg);` +
 		`aspect-ratio:1940/240;${paint}` +
-		// .i_box is carried for camouflage (see mount); neutralise its box, and
-		// the global button styles (a fixed height would defeat aspect-ratio).
-		`padding:0;border:0;background-color:transparent;` +
-		`height:auto;box-shadow:none;cursor:pointer;}` +
+		// Neutralise the user-agent button box.
+		`padding:0;border:0;background-color:transparent;cursor:pointer;}` +
 		`.${cls}>img{display:block;width:100%;height:100%;object-fit:cover;}` +
 		`.${cls}:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}` +
 		`@media (max-width:48em){.${cls}{aspect-ratio:1200/400;}}`
@@ -104,6 +109,7 @@ async function toBlobUrl(dataUri) {
 export class Sponsor {
 	constructor(mountSelector) {
 		this.mount = document.querySelector(mountSelector)
+		this.root = null
 		this.rebuilds = 0
 		this.node = null
 		this.styleNode = null
@@ -118,6 +124,8 @@ export class Sponsor {
 		const wide = window.matchMedia(WIDE_QUERY).matches
 		const module = await (wide ? CREATIVES.wide() : CREATIVES.narrow())
 		this.creative = module.default
+		this.root = this.mount.attachShadow({ mode: 'closed' })
+		this.root.appendChild(document.createElement('slot'))
 		this.render()
 	}
 
@@ -154,13 +162,10 @@ export class Sponsor {
 
 		this.styleNode = document.createElement('style')
 		this.styleNode.textContent = styleSheetFor(cls, mode, this.creative)
-		document.head.appendChild(this.styleNode)
+		this.root.prepend(this.styleNode)
 
 		const link = document.createElement('button')
-		// .i_box is deliberate: the accuracy caveat and the GitHub ask carry it
-		// too, so a rule written against it takes both of those down as well.
-		// The random class above neutralises everything .i_box paints.
-		link.className = `i_box ${cls}`
+		link.className = cls
 		link.type = 'button'
 		link.setAttribute('role', 'link')
 		link.setAttribute('aria-label', LABEL)
@@ -190,7 +195,7 @@ export class Sponsor {
 			link.appendChild(img)
 		}
 
-		this.mount.insertBefore(link, this.mount.firstChild)
+		this.root.prepend(link)
 		this.node = link
 		this.watch()
 	}
@@ -204,10 +209,10 @@ export class Sponsor {
 			)
 		})
 
-		// Catches a node that is removed outright (uBO's :remove()) and any
-		// attribute rewrite, which a static check on a timer would miss.
+		// Catches a node that is removed outright and any attribute rewrite,
+		// which a static check on a timer would miss.
 		this.observer = new MutationObserver(() => this.verify())
-		this.observer.observe(this.mount, {
+		this.observer.observe(this.root, {
 			childList: true,
 			subtree: true,
 			attributes: true,
