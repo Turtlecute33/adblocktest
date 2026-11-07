@@ -171,7 +171,6 @@ export class ShareDialog {
 		this.format = 'landscape'
 		this.cache = {}
 		this.preview = el.querySelector('.share_preview')
-		this.img = el.querySelector('.share_img')
 		this.download = el.querySelector('#share_download')
 		el.querySelectorAll('[data-format]').forEach((b) =>
 			b.addEventListener('click', () => {
@@ -184,39 +183,47 @@ export class ShareDialog {
 
 	open() {
 		// The result is fixed for this page load: Re-test reloads the page.
-		if (!this.data) {
-			this.data = this.getData()
-			this.img.alt =
-				'AdBlockTest result: ' +
-				Math.round(this.data.percent) +
-				'%, ' +
-				this.data.blocked +
-				' of ' +
-				this.data.total +
-				' checks blocked'
-		}
+		if (!this.data) this.data = this.getData()
 		this.update()
 		this.dialog.show()
 	}
 
+	// One canvas and one PNG per shape, made once.
 	render(format) {
 		if (!this.cache[format]) {
-			this.cache[format] = new Promise((resolve, reject) => {
-				const canvas = document.createElement('canvas')
-				drawCard(canvas, this.data, format)
+			const d = this.data
+			const canvas = document.createElement('canvas')
+			drawCard(canvas, d, format)
+			// The preview is this canvas, not an <img>. The filter lists hide
+			// every element on this site with a blob: source
+			// (adblock.turtlecute.org##[src*="blob:"], written against an old
+			// sponsor banner), and a canvas has no source.
+			canvas.setAttribute('role', 'img')
+			canvas.setAttribute(
+				'aria-label',
+				'AdBlockTest result: ' +
+					Math.round(d.percent) +
+					'%, ' +
+					d.blocked +
+					' of ' +
+					d.total +
+					' checks blocked'
+			)
+			const file = new Promise((resolve, reject) => {
 				canvas.toBlob((blob) => {
 					if (!blob) return reject(new Error('toBlob failed'))
 					resolve({
 						url: URL.createObjectURL(blob),
 						name:
 							'adblocktest-' +
-							Math.round(this.data.percent) +
+							Math.round(d.percent) +
 							'-' +
 							format +
 							'.png'
 					})
 				}, 'image/png')
 			})
+			this.cache[format] = { canvas, file }
 		}
 		return this.cache[format]
 	}
@@ -232,24 +239,22 @@ export class ShareDialog {
 				)
 			)
 		this.preview.dataset.format = format
-		this.img.width = FORMATS[format].width
-		this.img.height = FORMATS[format].height
 		this.download.disabled = true
 		try {
-			const entry = await this.render(format)
-			if (this.format !== format) return
-			this.img.src = entry.url
-			this.download.disabled = false
+			const entry = this.render(format)
+			this.preview.replaceChildren(entry.canvas)
+			await entry.file
+			if (this.format === format) this.download.disabled = false
 		} catch (err) {
 			this.onError('Could not draw the image')
 		}
 	}
 
 	async save() {
-		const entry = await this.render(this.format)
+		const { url, name } = await this.render(this.format).file
 		const a = document.createElement('a')
-		a.href = entry.url
-		a.download = entry.name
+		a.href = url
+		a.download = name
 		document.body.appendChild(a)
 		a.click()
 		a.remove()
