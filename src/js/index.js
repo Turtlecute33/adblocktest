@@ -483,41 +483,12 @@ function stopAdBlockTesting() {
 	if (lt_cwrap) lt_cwrap.classList.remove('start')
 }
 
-// What the share image shows: the score, and blocked/total per category.
+// What the share image shows: the score and the blocked/total count.
 function shareData() {
-	const rows = Object.keys(abt.hosts).map((key) => {
-		let blocked = 0
-		let total = 0
-		Object.values(abt.hosts[key]).forEach((group) => {
-			Object.values(group).forEach((isBlocked) => {
-				total += 1
-				if (isBlocked) blocked += 1
-			})
-		})
-		return { label: CATEGORY_LABELS[key] || key, blocked, total }
-	})
-	const cosmetic = [abt.cosmetic_test.static, abt.cosmetic_test.dynamic]
-	const scripts = [abt.script.ads, abt.script.pagead]
-	rows.push({
-		label: 'Cosmetic filter',
-		blocked: cosmetic.filter(Boolean).length,
-		total: cosmetic.length
-	})
-	rows.push({
-		label: 'Ad scripts',
-		blocked: scripts.filter(Boolean).length,
-		total: scripts.length
-	})
 	return {
 		percent: abt.total === 0 ? 0 : (100 / abt.total) * abt.blocked,
 		blocked: abt.blocked,
-		total: abt.total,
-		rows,
-		date: new Date().toLocaleDateString(undefined, {
-			day: 'numeric',
-			month: 'short',
-			year: 'numeric'
-		})
+		total: abt.total
 	}
 }
 
