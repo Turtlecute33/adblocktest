@@ -541,7 +541,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	const shareButton = document.querySelector('#share_result')
 	const shareDialog = new ShareDialog(document.querySelector('#dlg_share'), {
 		getData: shareData,
-		notify: (message) => snackbar.show(message),
 		onError: (message) => snackbar.show(message, 'error')
 	})
 	shareButton.addEventListener('click', () => shareDialog.open())

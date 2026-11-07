@@ -402,7 +402,7 @@ adblock.turtlecute.org##.textads</code></pre>
         </div>
     </div>
     <%# Share: js/components/share.js draws the result card on a canvas in the
-        browser and fills the preview. Nothing is uploaded. %>
+        browser for the preview and the download. Nothing is uploaded. %>
     <div class="dialog" id="dlg_share" data-a11y-dialog="dlg_share" aria-labelledby="dlg_share-title" aria-hidden="true">
         <div class="dialog-overlay" data-a11y-dialog-hide></div>
         <div class="dialog-content">
@@ -418,38 +418,16 @@ adblock.turtlecute.org##.textads</code></pre>
                         <button type="button" data-format="landscape" aria-pressed="true">Landscape</button>
                         <button type="button" data-format="portrait" aria-pressed="false">Portrait</button>
                     </div>
-                    <div class="share_seg" role="group" aria-label="Preview on">
-                        <button type="button" data-platform="x" aria-pressed="true">X</button>
-                        <button type="button" data-platform="reddit" aria-pressed="false">Reddit</button>
-                        <button type="button" data-platform="instagram" aria-pressed="false">Instagram</button>
-                    </div>
                 </div>
-                <div class="share_preview" data-platform="x" data-format="landscape">
-                    <div class="sp_head">
-                        <span class="sp_avatar" aria-hidden="true"></span>
-                        <span class="sp_name">You</span>
-                        <span class="sp_meta">@you · now</span>
-                    </div>
-                    <p class="sp_caption"></p>
-                    <div class="sp_media"><img class="sp_img" alt="" width="1200" height="675"></div>
-                    <div class="sp_actions" aria-hidden="true">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 12v-3a3 3 0 0 1 3 -3h13m-3 -3l3 3l-3 3"></path><path d="M20 12v3a3 3 0 0 1 -3 3h-13m3 3l-3 -3l3 -3"></path></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path></svg>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-6"></path><path d="M12 15v-12m-4 4l4 -4l4 4"></path></svg>
-                    </div>
-                </div>
-                <p class="share_hint"></p>
+                <div class="share_preview" data-format="landscape"><img class="share_img" alt="" width="1200" height="675"></div>
             </section>
             <footer>
-                <button type="button" id="share_download" disabled data-umami-event="Share image download"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <button type="button" id="share_download" class="btn-p" disabled data-umami-event="Share image download"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
                         <path d="M7 11l5 5l5 -5"></path>
                         <path d="M12 4l0 12"></path>
                     </svg> Download image</button>
-                <button type="button" id="share_native" hidden data-umami-event="Share image native">Share image</button>
-                <button type="button" id="share_post" class="btn-p" data-umami-event="Share post">Post on X</button>
             </footer>
         </div>
     </div>

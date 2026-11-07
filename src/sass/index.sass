@@ -147,23 +147,16 @@ main
 #dlg_compatibility
 	z-index: 52
 
-// Share dialog: a preview of the generated image inside a plain post frame.
-// The frames only borrow each platform's layout (caption above or below the
-// image, edge-to-edge media), not its look.
+// Share dialog: the generated image and its download button.
 #dlg_share
 	z-index: 52
-	[hidden]
-		display: none !important
 	.dialog-content>footer
-		flex-wrap: wrap
 		justify-content: flex-end
 		>button
 			margin: 0
 .share_controls
 	display: flex
-	flex-wrap: wrap
-	justify-content: space-between
-	gap: var(--sp-2)
+	justify-content: center
 	margin-bottom: var(--sp-3) !important
 .share_seg
 	display: inline-flex
@@ -186,81 +179,17 @@ main
 			background: var(--bg3)
 			color: var(--txt)
 .share_preview
-	display: flex
-	flex-direction: column
-	gap: .6rem
 	max-width: 34rem
 	margin: 0 auto !important
-	padding: .85rem
-	border: 1px solid var(--brd)
-	border-radius: var(--r-md)
-	background: var(--bg2)
-	font-size: .9rem
 	&[data-format="portrait"]
 		max-width: 18rem
-	&[data-platform="reddit"]
-		.sp_caption
-			font-size: 1.05rem
-			font-weight: 700
-		.sp_media img
-			border-radius: .5rem
-		.sp_actions
-			justify-content: flex-start
-			gap: 1.5rem
-	&[data-platform="instagram"]
-		padding: .75rem 0
-		.sp_head, .sp_actions, .sp_caption
-			padding: 0 .75rem
-		.sp_media img
-			border-radius: 0
-			border-left: 0
-			border-right: 0
-		.sp_actions
-			order: 3
-			justify-content: flex-start
-			gap: 1rem
-		.sp_caption
-			order: 4
-			&::before
-				content: "you "
-				font-weight: 700
-.share_hint
-	margin-top: var(--sp-2) !important
-	font-size: .8rem
-	line-height: 1.45
-	text-align: center
-	color: var(--txt-h)
-.sp_head
-	display: flex
-	align-items: center
-	gap: .5rem
-.sp_avatar
-	flex: none
-	width: 2rem
-	height: 2rem
-	border-radius: 50%
-	background: linear-gradient(135deg, var(--blue), var(--green))
-.sp_name
-	font-weight: 700
-.sp_meta
-	color: var(--txt-h)
-.sp_caption
-	line-height: 1.45
-	overflow-wrap: anywhere
-.sp_media img
-	display: block
-	width: 100%
-	height: auto
-	border-radius: .9rem
-	border: 1px solid var(--brd)
-	background: var(--bg)
-.sp_actions
-	display: flex
-	justify-content: space-between
-	color: var(--txt-h)
-	>svg
-		width: 1.15rem
-		height: 1.15rem
+	img
+		display: block
+		width: 100%
+		height: auto
+		border-radius: var(--r-md)
+		border: 1px solid var(--brd)
+		background: var(--bg)
 .compat_wrap
 	display: flex
 	flex-direction: column
