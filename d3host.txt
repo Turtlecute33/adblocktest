@@ -7,8 +7,8 @@
 
 # Covers the Host category of https://adblock.turtlecute.org — a hosts file cannot pass the cosmetic filter or ad script checks. Pair it with a browser extension for a full score.
 # Type : Stable
-# Entries : 129
-# Updated On: 17/3/2026
+# Entries : 127
+# Updated On: 7/11/2026
 # Created by: Turtlecute
 
 #============ Ads =============
@@ -41,7 +41,6 @@
 # --- Media.net
 0.0.0.0 static.media.net
 0.0.0.0 media.net
-0.0.0.0 adservetx.media.net
 
 
 #========= Analytics ==========
@@ -59,7 +58,6 @@
 0.0.0.0 script.hotjar.com
 0.0.0.0 surveys.hotjar.com
 0.0.0.0 careers.hotjar.com
-0.0.0.0 events.hotjar.io
 
 # --- MouseFlow
 0.0.0.0 mouseflow.com
