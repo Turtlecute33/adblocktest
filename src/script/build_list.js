@@ -115,7 +115,7 @@ function build(obj, comment, pre, post) {
 	})
 	if (pre === '||')
 		txt +=
-			'\n*$3p,domain=adblock.turtlecute.org\n/pagead.js$domain=adblock.turtlecute.org\n@@*$redirect-rule,domain=adblock.turtlecute.org\nadblock.turtlecute.org##.textads'
+			'\n*$3p,domain=adblock.turtlecute.org\n/pagead.js$domain=adblock.turtlecute.org\n/widget/ads.$domain=adblock.turtlecute.org\n@@*$redirect-rule,domain=adblock.turtlecute.org\nadblock.turtlecute.org##.textads'
 	const date = new Date()
 	const d =
 		date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear()

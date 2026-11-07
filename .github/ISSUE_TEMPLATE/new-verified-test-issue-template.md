@@ -25,8 +25,4 @@ assignees: Turtlecute33
 
 ### Evidence
 
-<!-- Exported test result, screenshots, or test log. -->
-
-```
-<test result / log>
-```
+<!-- A screenshot of the result. -->

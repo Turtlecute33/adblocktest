@@ -27,13 +27,9 @@ Fields marked required are needed for triage. Use "N/A" if not applicable.
 
 <!-- What you thought should happen. -->
 
-### Logs & screenshots
+### Result & screenshots
 
-<!-- Paste the test log, dev console output, or screenshots if relevant. -->
-
-```
-<test log here>
-```
+<!-- Your score, the items marked "not blocked", a screenshot of the result, and the browser console output if relevant. -->
 
 ### Confirmation
 

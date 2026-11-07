@@ -7,8 +7,8 @@
 
 ! Covers every category on https://adblock.turtlecute.org, including the cosmetic filter and ad script checks.
 ! Type : Stable
-! Entries : 129
-! Updated On: 17/3/2026
+! Entries : 127
+! Updated On: 7/11/2026
 ! Created by: Turtlecute
 
 !============ Ads =============
@@ -41,7 +41,6 @@
 ! --- Media.net
 ||static.media.net^
 ||media.net^
-||adservetx.media.net^
 
 
 !========= Analytics ==========
@@ -59,7 +58,6 @@
 ||script.hotjar.com^
 ||surveys.hotjar.com^
 ||careers.hotjar.com^
-||events.hotjar.io^
 
 ! --- MouseFlow
 ||mouseflow.com^
@@ -219,5 +217,6 @@
 
 *$3p,domain=adblock.turtlecute.org
 /pagead.js$domain=adblock.turtlecute.org
+/widget/ads.$domain=adblock.turtlecute.org
 @@*$redirect-rule,domain=adblock.turtlecute.org
 adblock.turtlecute.org##.textads

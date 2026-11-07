@@ -27,8 +27,7 @@
 		],
 		"Media.net": [
 			"static.media.net",
-			"media.net",
-			"adservetx.media.net"
+			"media.net"
 		]
 	},
 	"Analytics": {
@@ -44,8 +43,7 @@
 			"insights.hotjar.com",
 			"script.hotjar.com",
 			"surveys.hotjar.com",
-			"careers.hotjar.com",
-			"events.hotjar.io"
+			"careers.hotjar.com"
 		],
 		"MouseFlow": [
 			"mouseflow.com",

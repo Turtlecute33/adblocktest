@@ -4,7 +4,7 @@
 		{
 			page:'adblock',
 			title:'Ad Blocker Test | Check if Your Ad Blocker Works',
-			description:"Free ad blocker test for browsers, extensions, VPNs and DNS filters. Check uBlock Origin, AdGuard, Pi-hole or NextDNS against 128 ad and tracker hosts in one click.",
+			description:"Free ad blocker test for browsers, extensions, VPNs and DNS filters. Check uBlock Origin, AdGuard, Pi-hole or NextDNS against 126 ad and tracker hosts in one click.",
 			url: 'adblock.turtlecute.org',
 			canonical: 'https://adblock.turtlecute.org/',
 			preview_thumbnail:'https://adblock.turtlecute.org/assets/preview_toolz.jpg'
@@ -83,19 +83,30 @@
                         </div>
                     </div>
                     <div class="_f-center">
-                        <button id="start_test" aria-label="Re-test ad blocker"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-refresh-dot" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"></path>
-                                <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path>
-                                <circle cx="12" cy="12" r="1"></circle>
-                            </svg> &nbsp; Re-test</button>
+                        <div class="result_actions">
+                            <button id="start_test" type="button" aria-label="Re-test ad blocker"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-refresh-dot" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"></path>
+                                    <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"></path>
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                </svg> Re-test</button>
+                            <%# Disabled, not hidden, until the result is in: a button that appears at
+                                the end of the test would move the row, and that counts as layout shift. %>
+                            <button id="share_result" type="button" disabled data-umami-event="Share result"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <circle cx="6" cy="12" r="3"></circle>
+                                    <circle cx="18" cy="6" r="3"></circle>
+                                    <circle cx="18" cy="18" r="3"></circle>
+                                    <path d="M8.7 10.7l6.6 -3.4M8.7 13.3l6.6 3.4"></path>
+                                </svg> Share</button>
+                        </div>
                     </div>
                     <div class="_f-center">
                         <div class="card" id="adb_test_r"><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="var(--blue)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
                                     <path stroke="none" d="M0 0h24v24H0z"></path>
                                     <path d="M11 12a1 1 0 1 0 2 0 1 1 0 1 0-2 0"></path>
                                     <path d="M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0"></path>
-                                </svg> Total : </span><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" stroke-width="2" stroke="var(--green)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                </svg> Total: </span><span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" stroke-width="2" stroke="var(--green)" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M0 0h24v24H0z" stroke="none"></path>
                                     <circle cx="12" cy="12" r="9"></circle>
                                     <path d="M9 12l2 2 4-4"></path>
@@ -263,7 +274,7 @@ adblock.turtlecute.org##.textads</code></pre>
                     <summary>How do I test Pi-hole, AdGuard Home or NextDNS?</summary>
                     <div>
                         <p>Run the test with the DNS filter on and look at the Host category. A DNS filter blocks domains only, so it cannot pass the four cosmetic and script checks and cannot get 100% without a browser extension.</p>
-                        <p>If your Pi-hole, AdGuard Home or NextDNS shows a block page for blocked domains, the test counts those domains as not blocked. Set the blocking mode to NXDOMAIN or NULL and run the test again.</p>
+                        <p>If your Pi-hole, AdGuard Home or NextDNS shows a block page with a certificate that your device trusts, the test counts those domains as not blocked. Set the blocking mode to NXDOMAIN or NULL and run the test again.</p>
                     </div>
                 </details>
                 <details>
@@ -280,10 +291,10 @@ adblock.turtlecute.org##.textads</code></pre>
                 </details>
                 <details>
                     <summary>How can I get 100% on the ad blocker test?</summary>
-                    <div>A green score indicates satisfactory protection and there is no need to aim for 100%. However, if you want a perfect score, you can use the Turtlecute Host List which covers most of the host tests on the site (excluding cosmetic filters and script loading).
+                    <div>A green score means good protection, so you do not need 100%. For a perfect score, add the Turtlecute Host List. The TXT version is a hosts file for Pi-hole and other DNS filters, and it covers the Host category only. The ADBLOCK version is for uBlock Origin and AdGuard. It also has the cosmetic and script rules, so it covers every check.
                         <div class="grid keep-width _mt-1">
                             <div>
-                                <button class="btn-blue" id="hostListTxt">
+                                <button class="btn-blue" type="button" data-copy="https://adblock.turtlecute.org/d3host.txt">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                         <rect x="8" y="8" width="12" height="12" rx="2"></rect>
@@ -292,7 +303,7 @@ adblock.turtlecute.org##.textads</code></pre>
                                     Turtlecute Host List (TXT)</button>
                             </div>
                             <div>
-                                <button class="btn-blue" id="hostListAdblock">
+                                <button class="btn-blue" type="button" data-copy="https://adblock.turtlecute.org/d3host.adblock">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copy" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                         <rect x="8" y="8" width="12" height="12" rx="2"></rect>
@@ -307,7 +318,6 @@ adblock.turtlecute.org##.textads</code></pre>
             </div>
         </section>
     </main>
-    <%- include('partials/adblock/results.ejs') %>
     <% const adblock_compatibility = require('./data/adblock_compatibility.json') %>
     <div class="dialog" id="dlg_compatibility" data-a11y-dialog="dlg_compatibility" aria-labelledby="dlg_compatibility-title" aria-hidden="true">
         <div class="dialog-overlay" data-a11y-dialog-hide></div>
@@ -337,7 +347,7 @@ adblock.turtlecute.org##.textads</code></pre>
             const STATE_LABEL = { ok: 'Test works', mixed: 'Some limits', bad: 'Cannot test' }
             const ICON = { dns: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M3 12a9 9 0 1 0 18 0 9 9 0 1 0-18 0M3.6 9h16.8M3.6 15h16.8"/><path d="M11.5 3a17 17 0 0 0 0 18M12.5 3a17 17 0 0 1 0 18"/></svg>` }
             const kinds = [
-                { state: 'mixed', icon: ICON.dns, name: 'Pi-hole, AdGuard Home and other DNS filters', type: 'Pi-hole, AdGuard Home, AdGuard DNS, NextDNS, Control D, Quad9', desc: 'Not tested one by one. A DNS filter can only answer the Host category, so roughly 40–60% is the correct result for one on its own, not a failure. If the filter replies with its own block page instead of dropping the request, that looks like a successful connection here and the score drops further — set the blocking mode to NXDOMAIN or NULL. Add a browser extension to cover the cosmetic and script checks.' }
+                { state: 'mixed', icon: ICON.dns, name: 'Pi-hole, AdGuard Home and other DNS filters', type: 'Pi-hole, AdGuard Home, AdGuard DNS, NextDNS, Control D, Quad9', desc: 'Not tested one by one. A DNS filter can only answer the Host category, so on its own it can score up to 97%. Add a browser extension to cover the four cosmetic and script checks. If the filter shows its own block page with a certificate that your device trusts, the request succeeds and that domain counts as not blocked. Set the blocking mode to NXDOMAIN or NULL.' }
             ]
             const products = Object.keys(adblock_compatibility)
                 .filter((k) => k !== 'default' && adblock_compatibility[k].hidden !== true)
@@ -391,9 +401,59 @@ adblock.turtlecute.org##.textads</code></pre>
             </footer>
         </div>
     </div>
+    <%# Share: js/components/share.js draws the result card on a canvas in the
+        browser and fills the preview. Nothing is uploaded. %>
+    <div class="dialog" id="dlg_share" data-a11y-dialog="dlg_share" aria-labelledby="dlg_share-title" aria-hidden="true">
+        <div class="dialog-overlay" data-a11y-dialog-hide></div>
+        <div class="dialog-content">
+            <header>
+                <h3 id="dlg_share-title">Share your result</h3>
+                <button data-a11y-dialog-hide aria-label="Close share dialog"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg></button>
+            </header>
+            <section>
+                <div class="share_controls">
+                    <div class="share_seg" role="group" aria-label="Image shape">
+                        <button type="button" data-format="landscape" aria-pressed="true">Landscape</button>
+                        <button type="button" data-format="portrait" aria-pressed="false">Portrait</button>
+                    </div>
+                    <div class="share_seg" role="group" aria-label="Preview on">
+                        <button type="button" data-platform="x" aria-pressed="true">X</button>
+                        <button type="button" data-platform="reddit" aria-pressed="false">Reddit</button>
+                        <button type="button" data-platform="instagram" aria-pressed="false">Instagram</button>
+                    </div>
+                </div>
+                <div class="share_preview" data-platform="x" data-format="landscape">
+                    <div class="sp_head">
+                        <span class="sp_avatar" aria-hidden="true"></span>
+                        <span class="sp_name">You</span>
+                        <span class="sp_meta">@you · now</span>
+                    </div>
+                    <p class="sp_caption"></p>
+                    <div class="sp_media"><img class="sp_img" alt="" width="1200" height="675"></div>
+                    <div class="sp_actions" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M3 20l1.3 -3.9a9 8 0 1 1 3.4 2.9l-4.7 1"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 12v-3a3 3 0 0 1 3 -3h13m-3 -3l3 3l-3 3"></path><path d="M20 12v3a3 3 0 0 1 -3 3h-13m3 3l-3 -3l3 -3"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M19.5 12.572l-7.5 7.428l-7.5 -7.428a5 5 0 1 1 7.5 -6.566a5 5 0 1 1 7.5 6.572"></path></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 12v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-6"></path><path d="M12 15v-12m-4 4l4 -4l4 4"></path></svg>
+                    </div>
+                </div>
+                <p class="share_hint"></p>
+            </section>
+            <footer>
+                <button type="button" id="share_download" disabled data-umami-event="Share image download"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2"></path>
+                        <path d="M7 11l5 5l5 -5"></path>
+                        <path d="M12 4l0 12"></path>
+                    </svg> Download image</button>
+                <button type="button" id="share_native" hidden data-umami-event="Share image native">Share image</button>
+                <button type="button" id="share_post" class="btn-p" data-umami-event="Share post">Post on X</button>
+            </footer>
+        </div>
+    </div>
     <%- include('partials/support_me.ejs') %>
-    <%- include('partials/adblock/changelog.ejs') %>
-    <%- include('partials/adblock/logs.ejs') %>
     <%- include('partials/footer.ejs') %>
     <%- include('partials/gotop.ejs') %>
 
