@@ -69,16 +69,66 @@ main
 		>div
 			padding-top: .25rem
 			padding-bottom: .25rem
-// The sponsor renders at run time inside a closed shadow root on this element,
-// in a cell next to the cells that hold the two info bars, so the cells are
-// the flex items here. Its
-// own geometry ships in that shadow root, not from here: a class that exists in
-// index.css is a class a cosmetic rule can name. See js/components/sponsor.js.
 .notice_stack
 	display: flex
 	flex-direction: column
 	gap: var(--sp-3)
 	padding: var(--sp-3) var(--sp-1) var(--sp-1)
+// The sponsorship ask. Not .collab_*: turtlecute.org##.collab_wrap was in EasyList.
+.reach_box
+	display: flex
+	align-items: center
+	justify-content: space-between
+	gap: var(--sp-2) 1.25rem
+	flex-wrap: wrap
+	padding: 1.5rem 1.75rem
+	border-radius: var(--r-lg)
+	background: var(--bg2)
+	border: 1px dashed var(--brd)
+	color: var(--txt)
+	text-decoration: none
+	transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease
+	.reach_text
+		min-width: 0
+		display: flex
+		flex-direction: column
+		gap: .25rem
+		b
+			font-size: 1.15rem
+		.reach_sub
+			font-size: .9rem
+			opacity: .75
+	.reach_cta
+		display: inline-flex
+		align-items: center
+		gap: .45rem
+		max-width: 100%
+		overflow-wrap: anywhere
+		font-size: .95rem
+		font-weight: 600
+		color: var(--info-ac)
+		svg
+			flex-shrink: 0
+			width: 1.15rem
+			height: 1.15rem
+			transition: transform .2s ease
+	&:hover, &:focus-visible
+		transform: translateY(-1px)
+		border-color: var(--info-ac)
+		box-shadow: var(--shadow)
+		.reach_cta svg
+			transform: translateX(3px)
+	&:focus-visible
+		outline: 2px solid var(--focus)
+		outline-offset: 3px
+	@media (max-width: 40em)
+		flex-direction: column
+		align-items: flex-start
+		padding: 1.15rem 1.25rem
+		.reach_text b
+			font-size: 1.02rem
+		.reach_text .reach_sub
+			font-size: .82rem
 // One info bar, two variants: _warn for the test caveat, _info for the star ask
 .i_box
 	display: flex

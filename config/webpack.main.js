@@ -14,10 +14,9 @@ module.exports = {
 	},
 	output: {
 		filename: 'js/[name].js',
-		// No async chunks at present: the sponsor creatives are inlined into the
-		// main bundle (see js/components/sponsor.js). Any future chunk goes to
-		// the dist root, not js/: the lists block ||adblock.turtlecute.org/js/*ad,
-		// and a hex hash can contain "ad".
+		// No async chunks at present. Any future chunk goes to the dist root,
+		// not js/: the lists block ||adblock.turtlecute.org/js/*ad, and a hex
+		// hash can contain "ad".
 		chunkFilename: '[contenthash].js',
 		path: config.build,
 		clean: false,

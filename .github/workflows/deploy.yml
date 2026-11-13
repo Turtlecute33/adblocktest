@@ -58,13 +58,6 @@ jobs:
                    js/index.js js/pagead.js js/widget/ads.js assets/btcpay/pay.svg; do
             [ -s "dist/$f" ] || fail "dist/$f missing or empty"
           done
-          # Both sponsor creatives are inlined into the main bundle, so a network
-          # rule cannot block them without blocking the test.
-          [ "$(grep -o 'data:image/webp;base64' dist/js/index.js | wc -l)" -ge 2 ] \
-            || fail "sponsor creatives missing from the main bundle"
-          # The sponsor must not be reachable from the markup: everything about it
-          # that ever shipped as static HTML got a filter rule written against it.
-          if grep -q 'shockvpn' dist/index.html; then fail "sponsor destination leaked into the markup"; fi
           if grep -q 'btcpay.priorato.org/img' dist/index.html; then
             fail "pay button still loads from the remote payment host"
           fi

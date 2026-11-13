@@ -10,7 +10,6 @@ import { gotop } from './components/gotop'
 import { aos } from './components/aos'
 import { fadeIn, fadeOut } from './components/fade'
 import { Snackbar } from './components/snackbar'
-import { Sponsor } from './components/sponsor'
 import { ShareDialog } from './components/share'
 
 // These icons always accompany visible text, so exposing them as unnamed
@@ -505,9 +504,6 @@ document.addEventListener('DOMContentLoaded', function () {
 	})
 	new gotop()
 	new aos()
-	// Not awaited: the test below is what the visitor came for. A rejection here
-	// means the placement could not be built, which is a non-event for the page.
-	new Sponsor('.notice_stack').start().catch(() => {})
 
 	const shareButton = document.querySelector('#share_result')
 	const shareDialog = new ShareDialog(document.querySelector('#dlg_share'), {
